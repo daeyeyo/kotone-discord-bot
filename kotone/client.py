@@ -64,7 +64,7 @@ class KotoneBot(discord.Client):
                 print("STATUS_CHANNEL_ID is not set. Status messages are off.")
         return self.status_channel_id
 
-    STATUS_GIF_URL = "https://media1.tenor.com/m/uA3tTl_GsTgAAAAd/triples-kotone.gif"
+    STATUS_GIF_URL = "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/tripleS-kotone-punch.gif"
 
     def build_status_embed(self, status):
         if status == "Online":
