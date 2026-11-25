@@ -7,6 +7,9 @@ from discord import app_commands
 from kotone.client import (
     SLASH_COMMANDS,
     SLASH_COMMAND_ALIASES,
+    invalidate_user_name_cache,
+    preferred_discord_display_name,
+    resolve_discord_user_info,
     slash_command,
 )
 from kotone.config import (
@@ -22,6 +25,8 @@ from kotone.cooldowns import (
 )
 from kotone.db import (
     get_db,
+    set_user_display_name,
+    sync_user_username,
 )
 from kotone.game import (
     format_target,
@@ -97,40 +102,106 @@ async def minigame(ctx):
     await ctx.reply(embed=embed)
 
 
-@slash_command(name='profile')
-async def profile(ctx, user: discord.Member = None):
+def _parse_numeric_user_id(raw_value):
+    if raw_value is None:
+        return None
+    cleaned = str(raw_value).strip()
+    if cleaned.startswith("<@") and cleaned.endswith(">"):
+        cleaned = cleaned[2:-1]
+        if cleaned.startswith("!"):
+            cleaned = cleaned[1:]
+    cleaned = cleaned.strip()
+    if not (cleaned.isascii() and cleaned.isdigit()):
+        return None
+    parsed = int(cleaned)
+    if parsed <= 0 or parsed > (1 << 63) - 1:
+        return None
+    return parsed
+
+
+@slash_command(
+    name='profile',
+    descriptions={
+        "user": "Server member whose profile to view.",
+        "user_id": "Optional numeric player ID (e.g. 900000000000000008).",
+    },
+)
+async def profile(ctx, user: discord.Member = None, user_id: str = None):
     """Show a player's card collection profile."""
-    user = user or ctx.author
+    if user is not None:
+        target_user = user
+        target_id = user.id
+    elif user_id is not None:
+        target_id = _parse_numeric_user_id(user_id)
+        if target_id is None:
+            await ctx.reply("Please provide a valid numeric player ID.")
+            return
+        target_user = None
+    else:
+        target_user = ctx.author
+        target_id = ctx.author.id
+
+    if target_user is not None:
+        discord_username = (
+            getattr(target_user, "name", None) or str(target_user)
+        ).strip()
+        discord_display_name = preferred_discord_display_name(target_user)
+        sync_user_username(
+            target_id,
+            username=discord_username,
+            display_name=discord_display_name,
+        )
+
     try:
         with get_db() as conn:
             c = conn.cursor()
-            c.execute("SELECT COUNT(*) FROM cards WHERE owner_id=?", (user.id,))
+            c.execute("SELECT COUNT(*) FROM cards WHERE owner_id=?", (target_id,))
             card_count = c.fetchone()[0]
             c.execute(
-                "SELECT como, daily_streak FROM users WHERE user_id=?",
-                (user.id,),
+                "SELECT como, daily_streak, username, display_name FROM users WHERE user_id=?",
+                (target_id,),
             )
             user_row = c.fetchone()
             c.execute(
                 "SELECT member_code FROM user_biases WHERE user_id=?",
-                (user.id,),
+                (target_id,),
             )
             bias_codes = {row[0] for row in c.fetchall()}
             c.execute(
                 "SELECT bio FROM user_bios WHERE user_id=?",
-                (user.id,),
+                (target_id,),
             )
             bio_row = c.fetchone()
 
-        target = get_user_target(user.id)
+        stored_username = user_row[2] if user_row else None
+        stored_display_name = user_row[3] if user_row else None
+        resolved_name, fetched_names, resolved_discord_user = await resolve_discord_user_info(
+            ctx.bot,
+            target_id,
+            guild=ctx.guild,
+            stored_display_name=stored_display_name,
+            stored_username=stored_username,
+        )
+        if fetched_names is not None:
+            sync_user_username(
+                target_id,
+                username=fetched_names[1],
+                display_name=fetched_names[0],
+            )
+
+        target = get_user_target(target_id)
         embed = discord.Embed(
-            title=f"{user.display_name}'s Profile",
+            title=f"{discord.utils.escape_markdown(resolved_name)}'s Profile",
             color=0xff6b8b,
         )
-        embed.set_author(
-            name=user.name,
-            icon_url=user.display_avatar.url,
-        )
+        author_user = target_user or resolved_discord_user
+        if author_user is not None:
+            embed.set_author(
+                name=author_user.name,
+                icon_url=author_user.display_avatar.url,
+            )
+        else:
+            embed.set_author(name=f"ID: {target_id}")
         bias_names = ", ".join(
             S_MEMBERS[code]["name"]
             for code in S_ORDER if code in bias_codes
@@ -140,9 +211,9 @@ async def profile(ctx, user: discord.Member = None):
             f"📝 **Bio:**\n{bio_text}",
             "",
             "**Info:**",
-            f"💰 **Balance:** {user_row[0] if user_row else 0}",
+            f"💰 **Balance:** {(user_row[0] or 0) if user_row else 0}",
             f"🎴 **Cards:** {card_count}",
-            f"🔥 **Streak:** {user_row[1] if user_row else 0} days",
+            f"🔥 **Streak:** {(user_row[1] or 0) if user_row else 0} days",
             f"🎯 **Target:** {format_target(target) if target else 'None set'}",
             f"💖 **Bias:** {bias_names}",
         ]
@@ -151,6 +222,51 @@ async def profile(ctx, user: discord.Member = None):
     except Exception as e:
         print(f"Error in profile command: {e}")
         await ctx.reply("An error occurred while fetching the profile.")
+
+
+@slash_command(
+    name='setname',
+    descriptions={
+        "user_id": "The numeric player ID (e.g. 900000000000000008) to rename.",
+        "name": "The display name to save in the database (1-64 characters).",
+    },
+)
+async def setname(ctx, user_id: str, name: str):
+    """Admin/owner command to set a player's display name in the database."""
+    is_owner = await ctx.bot.is_bot_owner(ctx.author.id)
+    is_admin = (
+        ctx.guild is not None
+        and isinstance(ctx.author, discord.Member)
+        and ctx.author.guild_permissions.administrator
+    )
+    if not (is_owner or is_admin):
+        await ctx.reply(
+            "Only a bot owner or server administrator can use `/setname`."
+        )
+        return
+
+    target_id = _parse_numeric_user_id(user_id)
+    if target_id is None:
+        await ctx.reply(
+            "Please provide a valid numeric player ID (for example `900000000000000008`)."
+        )
+        return
+
+    try:
+        saved_name = set_user_display_name(target_id, name)
+    except ValueError as error:
+        await ctx.reply(str(error))
+        return
+    except sqlite3.Error as error:
+        print(f"Database error in setname command: {error}")
+        await ctx.reply("Could not save display name due to a database error.")
+        return
+
+    invalidate_user_name_cache(target_id)
+    await ctx.reply(
+        f"✅ Set display name for `{target_id}` to **{discord.utils.escape_markdown(saved_name)}**.",
+        allowed_mentions=discord.AllowedMentions.none(),
+    )
 
 
 @slash_command(name='bio')
@@ -286,6 +402,7 @@ async def cooldown(ctx):
         'spin': '🎰 Spin',
         'train': 'Train',
         'perform': 'Perform',
+        'hunt': '🌲 Hunt',
         'claim': '🙋 Claim',
         'trivia': '🧠 Trivia',
     }
@@ -393,6 +510,7 @@ async def cooldown(ctx):
         "spin": "DM me when my spin cooldown resets.",
         "train": "DM me when my training cooldown resets.",
         "perform": "DM me when my performance cooldown resets.",
+        "hunt": "DM me when my hunt cooldown resets.",
         "claim": "DM me when I can claim a card again.",
         "trivia": "DM me when I can play trivia again.",
     },
@@ -405,6 +523,7 @@ async def cooldown_reminders(
     spin: bool = None,
     train: bool = None,
     perform: bool = None,
+    hunt: bool = None,
     claim: bool = None,
     trivia: bool = None,
 ):
@@ -417,6 +536,7 @@ async def cooldown_reminders(
         "spin": spin,
         "train": train,
         "perform": perform,
+        "hunt": hunt,
         "claim": claim,
         "trivia": trivia,
     }

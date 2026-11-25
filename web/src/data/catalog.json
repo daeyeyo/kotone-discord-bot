@@ -1,0 +1,1140 @@
+{
+  "eras": {
+    "AAA": {
+      "name": "AAA",
+      "members": {
+        "JHR": {
+          "name": "Hyerin",
+          "full_name": "Jeong Hyerin",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/aaa%20jhr%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/aaa-hyerin-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/hyerin%20aaa%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/hyerin-AAA-legendary-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://gejzwuqlkaggzdmbgdsd.supabase.co/storage/v1/object/public/kotone%20bot/hyerin-AAA-legendary.gif"
+          }
+        },
+        "KYY": {
+          "name": "Yooyeon",
+          "full_name": "Kim Yooyeon",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/aaa%20kyy%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/aaa-yooyeon-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yooyeon%20aaa%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yooyeon%20aaa%20L%20preview.png",
+            "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+          },
+          "animated_images": {
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yooyeon%20aaa%20l.gif"
+          }
+        },
+        "KNK": {
+          "name": "Nakyoung",
+          "full_name": "Kim Nakyoung",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/aaa%20knk%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/aaa-nakyoung-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/nakyoung%20aaa%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/nakyoung%20aaa%20L%20preview.png",
+            "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+          },
+          "animated_images": {
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/nakyoung%20aaa%20l.gif"
+          }
+        },
+        "GYB": {
+          "name": "Yubin",
+          "full_name": "Gong Yubin",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/aaa%20gyb%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/aaa-yubin-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yubin%20aaa%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yubin%20aaa%20L%20preview.png",
+            "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+          },
+          "animated_images": {
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yubin%20aaa%20l.gif"
+          }
+        }
+      }
+    },
+    "ASSEMBLE": {
+      "name": "ASSEMBLE",
+      "members": {
+        "YSY": {
+          "name": "Seoyeon",
+          "full_name": "Yoon Seoyeon",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20ysy%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-seoyeon-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/seoyeon%20assemble%20epic.png",
+            "Legendary": "https://media.objekt.top/collection-images/front/ever01-seoyeon-402z-1782342601718.webp",
+            "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+          },
+          "animated_images": {
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yubin%20aaa%20l.gif"
+          }
+        },
+        "JHR": {
+          "name": "Hyerin",
+          "full_name": "Jeong Hyerin",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20jhr%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-hyerin-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/hyerin%20assemble%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/hyerin-AAA-legendary-preview.png",
+            "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+          },
+          "animated_images": {
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/hyerin-AAA-legendary.gif"
+          }
+        },
+        "LJW": {
+          "name": "Jiwoo",
+          "full_name": "Lee Jiwoo",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20ljw%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-jiwoo-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/jiwoo%20assemble%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/jiwoo-AAA-legendary-preview.png",
+            "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "KCY": {
+          "name": "Chaeyeon",
+          "full_name": "Kim Chaeyeon",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20kcy%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-chaeyeon-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/chaeyeon%20assemble%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/chaeyeon-AAA-legendary-preview.png",
+            "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+          },
+          "animated_images": {
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/chaeyeon-AAA-legendary.gif"
+          }
+        },
+        "KYY": {
+          "name": "Yooyeon",
+          "full_name": "Kim Yooyeon",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20kyy%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-yooyeon-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yooyeon%20assemble%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yooyeon-AAA-legendary-preview.png",
+            "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "KSM": {
+          "name": "Soomin",
+          "full_name": "Kim Soomin",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20ksm%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-soomin-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/soomin%20assemble%20epic.png",
+            "Legendary": "https://media.objekt.top/collection-images/front/ever01-soomin-402z-1782339995617.webp",
+            "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "KNK": {
+          "name": "Nakyoung",
+          "full_name": "Kim Nakyoung",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20knk%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-nakyoung-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/nakyoung%20assemble%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/nakyoung-AAA-legendary-preview.png",
+            "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "GYB": {
+          "name": "Yubin",
+          "full_name": "Gong Yubin",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20gyb%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-yubin-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yubin%20assemble%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yubin-AAA-legendary-preview.png",
+            "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "KAE": {
+          "name": "Kaede",
+          "full_name": "Yamada Kaede",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20kae%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-kaede-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kaede%20assemble%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kaede-AAA-legendary-preview.png",
+            "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "SDH": {
+          "name": "Dahyun",
+          "full_name": "Seo Dahyun",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20sdh%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-dahyun-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/dahyun%20assemble%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/dahyun-AAA-legendary-preview.png",
+            "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        }
+      }
+    },
+    "KRE": {
+      "name": "KRE",
+      "members": {
+        "YSY": {
+          "name": "Seoyeon",
+          "full_name": "Yoon Seoyeon",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kre%20ysy%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kre-seoyeon-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kre%20seoyeon%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/seoyeon-AAA-legendary-preview.png",
+            "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "LJW": {
+          "name": "Jiwoo",
+          "full_name": "Lee Jiwoo",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kre%20ljw%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kre-jiwoo-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kre%20jiwoo%20epic.png",
+            "Legendary": "https://media.objekt.top/collection-images/front/cream02-jiwoo-402z-1782339924657.webp",
+            "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "KCY": {
+          "name": "Chaeyeon",
+          "full_name": "Kim Chaeyeon",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kre%20kcy%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kre-chaeyeon-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kre%20chaeyeon%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/chaeyeon-AAA-legendary-preview.png",
+            "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "KSM": {
+          "name": "Soomin",
+          "full_name": "Kim Soomin",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kre%20ksm%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kre-soomin-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kre%20soomin%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/soomin-AAA-legendary-preview.png",
+            "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        }
+      }
+    },
+    "ASSEMBLE24": {
+      "name": "ASSEMBLE24",
+      "members": {
+        "YSY": {
+          "name": "Seoyeon",
+          "full_name": "Yoon Seoyeon",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20SEOYEON.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-seoyeon-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/seoyeon%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/seoyeon-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/seoyeon-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "JHR": {
+          "name": "Hyerin",
+          "full_name": "Jeong Hyerin",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20HYERIN.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-hyerin-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/hyerin%20assemble24%20epic.png",
+            "Legendary": "https://cdn.discordapp.com/attachments/1335162578246041680/1559959802896060516/4d9fba29-2611-4e3e-a12a-b38d9d16b12b.png?ex=6ad0f947&is=6acfa7c7&hm=ed65212f4b455c4361159a4a85c2d7e232979e8fae5b20e60de481e407910832&",
+            "Mythic": "https://cdn.discordapp.com/attachments/1335162578246041680/1559959802896060516/4d9fba29-2611-4e3e-a12a-b38d9d16b12b.png?ex=6ad0f947&is=6acfa7c7&hm=ed65212f4b455c4361159a4a85c2d7e232979e8fae5b20e60de481e407910832&"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "LJW": {
+          "name": "Jiwoo",
+          "full_name": "Lee Jiwoo",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20JIWOO.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-jiwoo-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/jiwoo%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/jiwoo-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/jiwoo-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "KCY": {
+          "name": "Chaeyeon",
+          "full_name": "Kim Chaeyeon",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20CHAEYEON.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-chaeyeon-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/chaeyeon%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/chaeyeon-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/chaeyeon-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "KYY": {
+          "name": "Yooyeon",
+          "full_name": "Kim Yooyeon",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20YOOYEON.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-yooyeon-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yooyeon%20assemble24%20epic.png",
+            "Legendary": "https://cdn.discordapp.com/attachments/1335162578246041680/1559959802896060516/4d9fba29-2611-4e3e-a12a-b38d9d16b12b.png?ex=6ad0f947&is=6acfa7c7&hm=ed65212f4b455c4361159a4a85c2d7e232979e8fae5b20e60de481e407910832&",
+            "Mythic": "https://cdn.discordapp.com/attachments/1335162578246041680/1559959802896060516/4d9fba29-2611-4e3e-a12a-b38d9d16b12b.png?ex=6ad0f947&is=6acfa7c7&hm=ed65212f4b455c4361159a4a85c2d7e232979e8fae5b20e60de481e407910832&"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "KSM": {
+          "name": "Soomin",
+          "full_name": "Kim Soomin",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20SOOMIN.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-soomin-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/soomin%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/soomin-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/soomin-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "KNK": {
+          "name": "Nakyoung",
+          "full_name": "Kim Nakyoung",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20NAKYOUNG.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-nakyoung-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/nakyoung%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/nakyoung-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/nakyoung-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "GYB": {
+          "name": "Yubin",
+          "full_name": "Gong Yubin",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20YUBIN.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-yubin-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yubin%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yubin-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yubin-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "KAE": {
+          "name": "Kaede",
+          "full_name": "Yamada Kaede",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20KAEDE.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-kaede-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kaede%20assemble24%20epic.png",
+            "Legendary": "https://cdn.discordapp.com/attachments/1335162578246041680/1559959802896060516/4d9fba29-2611-4e3e-a12a-b38d9d16b12b.png?ex=6ad0f947&is=6acfa7c7&hm=ed65212f4b455c4361159a4a85c2d7e232979e8fae5b20e60de481e407910832&",
+            "Mythic": "https://cdn.discordapp.com/attachments/1335162578246041680/1559959802896060516/4d9fba29-2611-4e3e-a12a-b38d9d16b12b.png?ex=6ad0f947&is=6acfa7c7&hm=ed65212f4b455c4361159a4a85c2d7e232979e8fae5b20e60de481e407910832&"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "SDH": {
+          "name": "Dahyun",
+          "full_name": "Seo Dahyun",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20DAHYUN.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-dahyun-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/dahyun%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/dahyun-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/dahyun-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "KTN": {
+          "name": "Kotone",
+          "full_name": "Kamimoto Kotone",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20KOTONE.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-kotone-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kotone%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kotone-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kotone-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "KYJ": {
+          "name": "Yeonji",
+          "full_name": "Kwak Yeonji",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20YEONJI.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-yeonji-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yeonji%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yeonji-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yeonji-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "HST": {
+          "name": "Nien",
+          "full_name": "Hsu Nien Tzu",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20NIEN.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-nien-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/nien%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/nien-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/nien-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "PSH": {
+          "name": "Sohyun",
+          "full_name": "Park Sohyun",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20SOHYUN.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-sohyun-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/sohyun%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/sohyun-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/sohyun-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "ZXY": {
+          "name": "Xinyu",
+          "full_name": "Zhou Xinyu",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20XINYU.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-xinyu-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/xinyu%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/xinyu-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/xinyu-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "KMY": {
+          "name": "Mayu",
+          "full_name": "Koma Mayu",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20MAYU.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-mayu-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/mayu%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/mayu-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/mayu-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "LYN": {
+          "name": "Lynn",
+          "full_name": "Kawakami Lynn",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20LYNN.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-lynn-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/lynn%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/lynn-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/lynn-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "JBN": {
+          "name": "Joobin",
+          "full_name": "Joo Bin",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20JOOBIN.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-joobin-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/joobin%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/joobin-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/joobin-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "JHY": {
+          "name": "Hayeon",
+          "full_name": "Jeong Hayeon",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20HAYEON.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-hayeon-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/hayeon%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/hayeon-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/hayeon-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "SHI": {
+          "name": "Shion",
+          "full_name": "Park Shion",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20SHION.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-shion-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/shion%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/shion-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/shion-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "KCW": {
+          "name": "Chaewon",
+          "full_name": "Kim Chaewon",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20CHAEWON.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-chaewon-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/chaewon%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/chaewon-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/chaewon-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "SUL": {
+          "name": "Sullin",
+          "full_name": "Pirada Bunraksa",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20SULLIN.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-sullin-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/sullin%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/sullin-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/sullin-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "SEO": {
+          "name": "Seoah",
+          "full_name": "Jeong Haerin",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20SEOAH.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-seoah-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/seoah%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/seoah-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/seoah-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        },
+        "JSH": {
+          "name": "Jiyeon",
+          "full_name": "Ji Suhyeon",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/ASSEMBLE24%20JIYEON.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble24-jiyeon-r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/jiyeon%20assemble24%20epic.png",
+            "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/jiyeon-AAA-legendary-preview.png",
+            "Mythic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/jiyeon-AAA-mythic-preview.png"
+          },
+          "animated_images": {
+            "Legendary": "https://www.example.com/gifexample"
+          }
+        }
+      }
+    },
+    "VV": {
+      "name": "VV",
+      "members": {
+        "JHR": {
+          "name": "Hyerin",
+          "full_name": "Jeong Hyerin",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20hyerin%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20hyerin%20r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20hyerin%20e.png",
+            "Legendary": "https://example.com/example.jpg",
+            "Mythic": "https://example.com/example.jpg"
+          },
+          "animated_images": {}
+        },
+        "KYY": {
+          "name": "Yooyeon",
+          "full_name": "Kim Yooyeon",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20yooyeon%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20yooyeon%20r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20yooyeon%20e.png",
+            "Legendary": "https://example.com/example.jpg",
+            "Mythic": "https://example.com/example.jpg"
+          },
+          "animated_images": {}
+        },
+        "KNK": {
+          "name": "Nakyoung",
+          "full_name": "Kim Nakyoung",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20nakyoung%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20nakyoung%20r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20nakyoung%20e.png",
+            "Legendary": "https://example.com/example.jpg",
+            "Mythic": "https://example.com/example.jpg"
+          },
+          "animated_images": {}
+        },
+        "GYB": {
+          "name": "Yubin",
+          "full_name": "Gong Yubin",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20yubin%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20yubin%20r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20yubin%20e.png",
+            "Legendary": "https://example.com/example.jpg",
+            "Mythic": "https://example.com/example.jpg"
+          },
+          "animated_images": {}
+        },
+        "KAE": {
+          "name": "Kaede",
+          "full_name": "Yamada Kaede",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20kaede%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20kaede%20r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20kaede%20e.png",
+            "Legendary": "https://example.com/example.jpg",
+            "Mythic": "https://example.com/example.jpg"
+          },
+          "animated_images": {}
+        },
+        "KTN": {
+          "name": "Kotone",
+          "full_name": "Kamimoto Kotone",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20kotone%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20kotone%20r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20kotone%20e.png",
+            "Legendary": "https://example.com/example.jpg",
+            "Mythic": "https://example.com/example.jpg"
+          },
+          "animated_images": {}
+        },
+        "KYJ": {
+          "name": "Yeonji",
+          "full_name": "Kwak Yeonji",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20yeonji%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20yeonji%20r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20yeonji%20e.png",
+            "Legendary": "https://example.com/example.jpg",
+            "Mythic": "https://example.com/example.jpg"
+          },
+          "animated_images": {}
+        },
+        "HST": {
+          "name": "Nien",
+          "full_name": "Hsu Nien Tzu",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20nien%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20nien%20r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20nien%20e.png",
+            "Legendary": "https://example.com/example.jpg",
+            "Mythic": "https://example.com/example.jpg"
+          },
+          "animated_images": {}
+        },
+        "PSH": {
+          "name": "Sohyun",
+          "full_name": "Park Sohyun",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20sohyun%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20sohyun%20r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20sohyun%20e.png",
+            "Legendary": "https://example.com/example.jpg",
+            "Mythic": "https://example.com/example.jpg"
+          },
+          "animated_images": {}
+        },
+        "ZXY": {
+          "name": "Xinyu",
+          "full_name": "Zhou Xinyu",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20xinyu%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20xinyu%20r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20xinyu%20e.png",
+            "Legendary": "https://example.com/example.jpg",
+            "Mythic": "https://example.com/example.jpg"
+          },
+          "animated_images": {}
+        },
+        "LYN": {
+          "name": "Lynn",
+          "full_name": "Kawakami Lynn",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20lynn%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20lynn%20r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20lynn%20e.png",
+            "Legendary": "https://example.com/example.jpg",
+            "Mythic": "https://example.com/example.jpg"
+          },
+          "animated_images": {}
+        },
+        "JSH": {
+          "name": "Jiyeon",
+          "full_name": "Ji Suhyeon",
+          "images": {
+            "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20jiyeon%20c.png",
+            "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20jiyeon%20r.png",
+            "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/vv%20jiyeon%20e.png",
+            "Legendary": "https://example.com/example.jpg",
+            "Mythic": "https://example.com/example.jpg"
+          },
+          "animated_images": {}
+        }
+      }
+    }
+  },
+  "eraOrder": [
+    "AAA",
+    "ASSEMBLE",
+    "KRE",
+    "ASSEMBLE24",
+    "VV"
+  ],
+  "eraAliases": {
+    "ASSEMBLE": [
+      "ASSEMBLE",
+      "RISING"
+    ],
+    "ASSEMBLE24": [
+      "ASSEMBLE24",
+      "ASSEMBLE 24",
+      "GND",
+      "Girls Never Die",
+      "S1-S24",
+      "S1 to S24"
+    ],
+    "AAA": [
+      "AAA",
+      "Generation",
+      "acid angel asia",
+      "acid angel of asia",
+      "asid angel of asia",
+      "asid angel asia"
+    ],
+    "KRE": [
+      "KRE",
+      "Krystal Eyes",
+      "+(KR)ystal Eyes",
+      "Cherry Talk"
+    ],
+    "VV": [
+      "VV",
+      "Visionary Vision",
+      "Hit The Floor",
+      "HTF",
+      "Perfomante"
+    ]
+  },
+  "rarities": {
+    "Common": 100000,
+    "Rare": 44203,
+    "Epic": 580,
+    "Legendary": 10,
+    "Mythic": 1
+  },
+  "rarityOrder": [
+    "Common",
+    "Rare",
+    "Epic",
+    "Legendary",
+    "Mythic"
+  ],
+  "rarityAbilityRolls": {
+    "Common": {
+      "specialty": [
+        10,
+        15
+      ],
+      "cap": 40
+    },
+    "Rare": {
+      "specialty": [
+        15,
+        25
+      ],
+      "cap": 60
+    },
+    "Epic": {
+      "specialty": [
+        26,
+        42
+      ],
+      "cap": 85
+    },
+    "Legendary": {
+      "specialty": [
+        44,
+        66
+      ],
+      "cap": 115
+    },
+    "Mythic": {
+      "specialty": [
+        68,
+        92
+      ],
+      "cap": 150
+    }
+  },
+  "sOrder": [
+    "YSY",
+    "JHR",
+    "LJW",
+    "KCY",
+    "KYY",
+    "KSM",
+    "KNK",
+    "GYB",
+    "KAE",
+    "SDH",
+    "KTN",
+    "KYJ",
+    "HST",
+    "PSH",
+    "ZXY",
+    "KMY",
+    "LYN",
+    "JBN",
+    "JHY",
+    "SHI",
+    "KCW",
+    "SUL",
+    "SEO",
+    "JSH"
+  ],
+  "sMembers": {
+    "YSY": {
+      "name": "Seoyeon",
+      "full_name": "Yoon Seoyeon",
+      "images": {
+        "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20ysy%20c.png",
+        "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-seoyeon-r.png",
+        "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/seoyeon%20assemble%20epic.png",
+        "Legendary": "https://media.objekt.top/collection-images/front/ever01-seoyeon-402z-1782342601718.webp",
+        "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+      },
+      "animated_images": {
+        "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yubin%20aaa%20l.gif"
+      }
+    },
+    "JHR": {
+      "name": "Hyerin",
+      "full_name": "Jeong Hyerin",
+      "images": {
+        "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20jhr%20c.png",
+        "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-hyerin-r.png",
+        "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/hyerin%20assemble%20epic.png",
+        "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/hyerin-AAA-legendary-preview.png",
+        "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+      },
+      "animated_images": {
+        "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/hyerin-AAA-legendary.gif"
+      }
+    },
+    "LJW": {
+      "name": "Jiwoo",
+      "full_name": "Lee Jiwoo",
+      "images": {
+        "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20ljw%20c.png",
+        "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-jiwoo-r.png",
+        "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/jiwoo%20assemble%20epic.png",
+        "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/jiwoo-AAA-legendary-preview.png",
+        "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+      },
+      "animated_images": {
+        "Legendary": "https://www.example.com/gifexample"
+      }
+    },
+    "KCY": {
+      "name": "Chaeyeon",
+      "full_name": "Kim Chaeyeon",
+      "images": {
+        "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20kcy%20c.png",
+        "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-chaeyeon-r.png",
+        "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/chaeyeon%20assemble%20epic.png",
+        "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/chaeyeon-AAA-legendary-preview.png",
+        "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+      },
+      "animated_images": {
+        "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/chaeyeon-AAA-legendary.gif"
+      }
+    },
+    "KYY": {
+      "name": "Yooyeon",
+      "full_name": "Kim Yooyeon",
+      "images": {
+        "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20kyy%20c.png",
+        "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-yooyeon-r.png",
+        "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yooyeon%20assemble%20epic.png",
+        "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yooyeon-AAA-legendary-preview.png",
+        "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+      },
+      "animated_images": {
+        "Legendary": "https://www.example.com/gifexample"
+      }
+    },
+    "KSM": {
+      "name": "Soomin",
+      "full_name": "Kim Soomin",
+      "images": {
+        "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20ksm%20c.png",
+        "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-soomin-r.png",
+        "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/soomin%20assemble%20epic.png",
+        "Legendary": "https://media.objekt.top/collection-images/front/ever01-soomin-402z-1782339995617.webp",
+        "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+      },
+      "animated_images": {
+        "Legendary": "https://www.example.com/gifexample"
+      }
+    },
+    "KNK": {
+      "name": "Nakyoung",
+      "full_name": "Kim Nakyoung",
+      "images": {
+        "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20knk%20c.png",
+        "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-nakyoung-r.png",
+        "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/nakyoung%20assemble%20epic.png",
+        "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/nakyoung-AAA-legendary-preview.png",
+        "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+      },
+      "animated_images": {
+        "Legendary": "https://www.example.com/gifexample"
+      }
+    },
+    "GYB": {
+      "name": "Yubin",
+      "full_name": "Gong Yubin",
+      "images": {
+        "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20gyb%20c.png",
+        "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-yubin-r.png",
+        "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yubin%20assemble%20epic.png",
+        "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/yubin-AAA-legendary-preview.png",
+        "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+      },
+      "animated_images": {
+        "Legendary": "https://www.example.com/gifexample"
+      }
+    },
+    "KAE": {
+      "name": "Kaede",
+      "full_name": "Yamada Kaede",
+      "images": {
+        "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20kae%20c.png",
+        "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-kaede-r.png",
+        "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kaede%20assemble%20epic.png",
+        "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/kaede-AAA-legendary-preview.png",
+        "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+      },
+      "animated_images": {
+        "Legendary": "https://www.example.com/gifexample"
+      }
+    },
+    "SDH": {
+      "name": "Dahyun",
+      "full_name": "Seo Dahyun",
+      "images": {
+        "Common": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble%20sdh%20c.png",
+        "Rare": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/assemble-dahyun-r.png",
+        "Epic": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/dahyun%20assemble%20epic.png",
+        "Legendary": "https://pub-6b36c51f5c9a4d9c884ee896543879d9.r2.dev/dahyun-AAA-legendary-preview.png",
+        "Mythic": "https://media.discordapp.net/attachments/1335162578246041680/1559917581484302366/5bb48508-dd83-4c61-a0ed-8029bcff3cd6.png?ex=6ad0d1f5&is=6acf8075&hm=f8c6e26aae76d7531d714cdad1f2472a2544294532b97352d25ac0959fe1946a&=&format=webp&quality=lossless"
+      },
+      "animated_images": {
+        "Legendary": "https://www.example.com/gifexample"
+      }
+    },
+    "KTN": {
+      "name": "Kotone",
+      "full_name": "Kamimoto Kotone"
+    },
+    "KYJ": {
+      "name": "Yeonji",
+      "full_name": "Kwak Yeonji"
+    },
+    "HST": {
+      "name": "Nien",
+      "full_name": "Hsu Nien Tzu"
+    },
+    "PSH": {
+      "name": "Sohyun",
+      "full_name": "Park Sohyun"
+    },
+    "ZXY": {
+      "name": "Xinyu",
+      "full_name": "Zhou Xinyu"
+    },
+    "KMY": {
+      "name": "Mayu",
+      "full_name": "Koma Mayu"
+    },
+    "LYN": {
+      "name": "Lynn",
+      "full_name": "Kawakami Lynn"
+    },
+    "JBN": {
+      "name": "Joobin",
+      "full_name": "Joo Bin"
+    },
+    "JHY": {
+      "name": "Hayeon",
+      "full_name": "Jeong Hayeon"
+    },
+    "SHI": {
+      "name": "Shion",
+      "full_name": "Park Shion"
+    },
+    "KCW": {
+      "name": "Chaewon",
+      "full_name": "Kim Chaewon"
+    },
+    "SUL": {
+      "name": "Sullin",
+      "full_name": "Pirada Bunraksa"
+    },
+    "SEO": {
+      "name": "Seoah",
+      "full_name": "Jeong Haerin"
+    },
+    "JSH": {
+      "name": "Jiyeon",
+      "full_name": "Ji Suhyeon"
+    }
+  },
+  "memberSpecialty": {
+    "YSY": "Vocals",
+    "JHR": "Dance",
+    "LJW": "Vocals",
+    "KCY": "Vocals",
+    "KYY": "Vocals",
+    "KSM": "Vocals",
+    "KNK": "Rap",
+    "GYB": "Dance",
+    "KAE": "Dance",
+    "SDH": "Vocals",
+    "KTN": "Rap",
+    "KYJ": "Dance",
+    "HST": "Rap",
+    "PSH": "Rap",
+    "ZXY": "Dance",
+    "KMY": "Vocals",
+    "LYN": "Dance",
+    "JBN": "Vocals",
+    "JHY": "Vocals",
+    "SHI": "Vocals",
+    "KCW": "Vocals",
+    "SUL": "Dance",
+    "SEO": "Vocals",
+    "JSH": "Dance"
+  },
+  "spinDailyLimit": 5,
+  "cooldownDurations": {
+    "train": 14400,
+    "perform": 14400,
+    "hunt": 14400,
+    "daily": 86400,
+    "weekly": 604800
+  },
+  "shopItems": {
+    "drop_booster": {
+      "name": "Drop Luck Booster",
+      "price": 600,
+      "description": "Boosts Rare, Epic, Legendary, and Mythic drop weights for 1 hour."
+    },
+    "drop_reset": {
+      "name": "Drop Cooldown Reset",
+      "price": 200,
+      "description": "Reset your active /drop cooldown."
+    },
+    "merge_discount": {
+      "name": "Merge Discount Token",
+      "price": 1200,
+      "description": "Use for one merge that consumes 9 cards instead of 10."
+    },
+    "streak_shield": {
+      "name": "Streak Shield",
+      "price": 800,
+      "description": "Use to protect your streak from one missed day."
+    },
+    "extra_drop_slot": {
+      "name": "Extra Drop Slot",
+      "price": 400,
+      "description": "Use to add one card to your next /drop."
+    }
+  },
+  "dropBoosterDuration": 3600,
+  "dropBoosterRarityMultiplier": 1.5
+}

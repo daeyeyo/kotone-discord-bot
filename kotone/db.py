@@ -1,12 +1,158 @@
+import re
 import sqlite3
+import time
 from contextlib import contextmanager
+
+
+_SYNCED_USERNAMES = {}
+_SYNCED_USERNAME_TTL = 600
+_PLACEHOLDER_USERNAME_RE = re.compile(r"^user_\d+$", re.IGNORECASE)
+
+
+def _clean_non_placeholder_name(value):
+    if value is None:
+        return None
+    cleaned = str(value).strip()
+    if not cleaned or _PLACEHOLDER_USERNAME_RE.fullmatch(cleaned):
+        return None
+    if cleaned.casefold() in ("unknown", "unknown user"):
+        return None
+    return cleaned
+
+
+def sync_user_username(
+    user_id,
+    username=None,
+    *,
+    display_name=None,
+    create_if_missing=False,
+):
+    """Update a player's stored username and display_name in `users`."""
+    if not user_id:
+        return
+    cleaned_username = _clean_non_placeholder_name(username)
+    cleaned_display_name = _clean_non_placeholder_name(display_name)
+    if cleaned_username is None and cleaned_display_name is None:
+        return
+
+    now = time.monotonic()
+    cached = _SYNCED_USERNAMES.get(user_id)
+    if (
+        cached is not None
+        and cached[2] > now
+        and not create_if_missing
+        and (cleaned_username is None or cached[0] == cleaned_username)
+        and (cleaned_display_name is None or cached[1] == cleaned_display_name)
+    ):
+        return
+
+    try:
+        with get_db() as conn:
+            cursor = conn.cursor()
+            if create_if_missing:
+                cursor.execute(
+                    '''INSERT INTO users (user_id, username, display_name)
+                       VALUES (?, ?, ?)
+                       ON CONFLICT(user_id) DO UPDATE SET
+                           username = COALESCE(excluded.username, users.username),
+                           display_name = CASE
+                               WHEN COALESCE(users.custom_display_name, 0) = 0
+                               THEN COALESCE(excluded.display_name, users.display_name)
+                               ELSE users.display_name
+                           END
+                       WHERE (excluded.username IS NOT NULL AND (users.username IS NULL OR users.username != excluded.username))
+                          OR (COALESCE(users.custom_display_name, 0) = 0
+                              AND excluded.display_name IS NOT NULL
+                              AND (users.display_name IS NULL OR users.display_name != excluded.display_name))''',
+                    (user_id, cleaned_username, cleaned_display_name),
+                )
+            else:
+                cursor.execute(
+                    '''UPDATE users
+                       SET username = COALESCE(?, username),
+                           display_name = CASE
+                               WHEN COALESCE(custom_display_name, 0) = 0
+                               THEN COALESCE(?, display_name)
+                               ELSE display_name
+                           END
+                       WHERE user_id = ?
+                         AND ((? IS NOT NULL AND (username IS NULL OR username != ?))
+                              OR (COALESCE(custom_display_name, 0) = 0
+                                  AND ? IS NOT NULL
+                                  AND (display_name IS NULL OR display_name != ?)))''',
+                    (
+                        cleaned_username,
+                        cleaned_display_name,
+                        user_id,
+                        cleaned_username,
+                        cleaned_username,
+                        cleaned_display_name,
+                        cleaned_display_name,
+                    ),
+                )
+                if cursor.rowcount == 0:
+                    cursor.execute(
+                        "SELECT 1 FROM users WHERE user_id = ?",
+                        (user_id,),
+                    )
+                    if cursor.fetchone() is None:
+                        cursor.execute(
+                            "SELECT 1 FROM cards WHERE owner_id = ? LIMIT 1",
+                            (user_id,),
+                        )
+                        if cursor.fetchone() is not None:
+                            cursor.execute(
+                                "INSERT OR IGNORE INTO users (user_id, username, display_name) VALUES (?, ?, ?)",
+                                (user_id, cleaned_username, cleaned_display_name),
+                            )
+    except sqlite3.Error as error:
+        print(f"Could not sync username for {user_id}: {error}")
+        return
+
+    next_username = (
+        cleaned_username
+        if cleaned_username is not None
+        else (cached[0] if cached is not None else None)
+    )
+    next_display_name = (
+        cleaned_display_name
+        if cleaned_display_name is not None
+        else (cached[1] if cached is not None else None)
+    )
+    _SYNCED_USERNAMES[user_id] = (
+        next_username,
+        next_display_name,
+        time.monotonic() + _SYNCED_USERNAME_TTL,
+    )
+
+
+def set_user_display_name(user_id, display_name):
+    """Explicitly set a player's custom display_name in `users`."""
+    cleaned = str(display_name).strip() if display_name is not None else ""
+    if not cleaned:
+        raise ValueError("Display name cannot be empty.")
+    if len(cleaned) > 64:
+        raise ValueError("Display name must be 64 characters or fewer.")
+
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            '''INSERT INTO users (user_id, display_name, custom_display_name)
+               VALUES (?, ?, 1)
+               ON CONFLICT(user_id) DO UPDATE SET
+                   display_name = excluded.display_name,
+                   custom_display_name = 1''',
+            (user_id, cleaned),
+        )
+    _SYNCED_USERNAMES.pop(user_id, None)
+    return cleaned
 
 
 # Database context manager for safer connections
 @contextmanager
 def get_db():
     conn = sqlite3.connect('kpop_cards.db', timeout=10.0)
-    conn.execute("PRAGMA journal_mode=WAL")  # Better concurrency
+    conn.execute("PRAGMA busy_timeout=5000")
     try:
         yield conn
         conn.commit()
@@ -19,6 +165,7 @@ def get_db():
 # Database setup
 def init_db():
     with get_db() as conn:
+        conn.execute("PRAGMA journal_mode=WAL")  # Better concurrency
         c = conn.cursor()
         
         # Users table
@@ -27,7 +174,9 @@ def init_db():
                       username TEXT, 
                       daily_streak INTEGER DEFAULT 0,
                       last_daily TEXT,
-                      como INTEGER DEFAULT 0)''')
+                      como INTEGER DEFAULT 0,
+                      display_name TEXT,
+                      custom_display_name INTEGER NOT NULL DEFAULT 0)''')
         
         # Cards table
         c.execute('''CREATE TABLE IF NOT EXISTS cards
@@ -50,6 +199,11 @@ def init_db():
                       performances INTEGER NOT NULL DEFAULT 0,
                       last_trained REAL,
                       FOREIGN KEY(card_serial) REFERENCES cards(serial))''')
+        c.execute('''CREATE TABLE IF NOT EXISTS user_card_preferences
+                     (user_id INTEGER NOT NULL,
+                      action TEXT NOT NULL CHECK(action IN ('train', 'perform', 'hunt')),
+                      card_serial TEXT NOT NULL,
+                      PRIMARY KEY(user_id, action))''')
 
         # Cooldowns table
         c.execute('''CREATE TABLE IF NOT EXISTS cooldowns
@@ -135,6 +289,40 @@ def init_db():
                      ON trivia_seen(user_id, difficulty)''')
         
         # Check if columns exist, if not add them (for migration)
+        c.execute("PRAGMA table_info(users)")
+        user_columns = [column[1] for column in c.fetchall()]
+        if 'display_name' not in user_columns:
+            c.execute("ALTER TABLE users ADD COLUMN display_name TEXT")
+        if 'custom_display_name' not in user_columns:
+            c.execute(
+                "ALTER TABLE users ADD COLUMN custom_display_name "
+                "INTEGER NOT NULL DEFAULT 0"
+            )
+
+        c.execute(
+            '''SELECT sql FROM sqlite_master
+               WHERE type='table' AND name='user_card_preferences' '''
+        )
+        pref_row = c.fetchone()
+        if pref_row and "'hunt'" not in (pref_row[0] or ""):
+            c.execute(
+                '''CREATE TABLE user_card_preferences_new
+                   (user_id INTEGER NOT NULL,
+                    action TEXT NOT NULL CHECK(action IN ('train', 'perform', 'hunt')),
+                    card_serial TEXT NOT NULL,
+                    PRIMARY KEY(user_id, action))'''
+            )
+            c.execute(
+                '''INSERT OR IGNORE INTO user_card_preferences_new
+                   (user_id, action, card_serial)
+                   SELECT user_id, action, card_serial
+                   FROM user_card_preferences'''
+            )
+            c.execute("DROP TABLE user_card_preferences")
+            c.execute(
+                "ALTER TABLE user_card_preferences_new RENAME TO user_card_preferences"
+            )
+
         c.execute("PRAGMA table_info(cards)")
         columns = [column[1] for column in c.fetchall()]
         if 'era' not in columns:

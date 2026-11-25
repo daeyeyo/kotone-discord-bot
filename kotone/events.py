@@ -5,12 +5,14 @@ import discord
 from discord import app_commands
 from kotone.client import (
     bot,
+    preferred_discord_display_name,
 )
 from kotone.cooldowns import (
     cooldown_reminder_loop,
 )
 from kotone.db import (
     get_db,
+    sync_user_username,
 )
 
 # on_ready runs again after every reconnect, so "Online" is posted only once.
@@ -189,3 +191,16 @@ async def on_app_command_error(interaction, error):
         await interaction.followup.send(message, ephemeral=True)
     else:
         await interaction.response.send_message(message, ephemeral=True)
+
+
+def _sync_discord_user_names(user):
+    if user is None or getattr(user, "bot", False):
+        return
+    username = (getattr(user, "name", None) or str(user)).strip()
+    display_name = preferred_discord_display_name(user)
+    sync_user_username(user.id, username=username, display_name=display_name)
+
+
+bot._post_command_hooks.append(
+    lambda interaction: _sync_discord_user_names(interaction.user)
+)

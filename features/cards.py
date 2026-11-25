@@ -11,6 +11,7 @@ from eras import (
     normalize_era_alias,
 )
 from kotone.client import (
+    resolve_discord_user_info,
     slash_command,
 )
 from kotone.config import (
@@ -26,6 +27,7 @@ from kotone.cooldowns import (
 )
 from kotone.db import (
     get_db,
+    sync_user_username,
 )
 from kotone.game import (
     MERGE_UPGRADES,
@@ -1215,21 +1217,35 @@ async def view_card(ctx, serial: str):
             c = conn.cursor()
             skills = ensure_card_skill(c, serial, member_code, rarity)
 
-        # Get owner username
+        # Get owner username and display_name
         with get_db() as conn:
             c = conn.cursor()
-            c.execute("SELECT username FROM users WHERE user_id=?", (owner_id,))
+            c.execute(
+                "SELECT username, display_name FROM users WHERE user_id=?",
+                (owner_id,),
+            )
             owner = c.fetchone()
 
-        owner_name = owner[0] if owner else "Unknown"
-        owner_user = ctx.guild.get_member(owner_id) if ctx.guild and owner_id else None
-        if owner_user is None and owner_id:
-            owner_user = ctx.bot.get_user(owner_id)
-        if owner_user is None and owner_id:
-            try:
-                owner_user = await ctx.bot.fetch_user(owner_id)
-            except discord.HTTPException as e:
-                print(f"Could not fetch card owner {owner_id}: {e}")
+        stored_owner_name = owner[0] if owner else None
+        stored_owner_display_name = owner[1] if owner else None
+        if owner_id:
+            owner_name, fetched_names, owner_user = await resolve_discord_user_info(
+                ctx.bot,
+                owner_id,
+                guild=ctx.guild,
+                stored_display_name=stored_owner_display_name,
+                stored_username=stored_owner_name,
+            )
+            if fetched_names is not None:
+                fetched_display, fetched_username = fetched_names
+                sync_user_username(
+                    owner_id,
+                    username=fetched_username,
+                    display_name=fetched_display,
+                )
+        else:
+            owner_name = "Unclaimed"
+            owner_user = None
 
         # Get card info
         try:
@@ -1260,7 +1276,11 @@ async def view_card(ctx, serial: str):
 
         embed.add_field(name="Rarity", value=rarity, inline=True)
         embed.add_field(name="Era", value=era_name, inline=True)
-        embed.add_field(name="Owner", value=owner_name, inline=True)
+        embed.add_field(
+            name="Owner",
+            value=discord.utils.escape_markdown(owner_name),
+            inline=True,
+        )
         embed.add_field(
             name="Obtained",
             value=obtained_at[:10] if obtained_at else "Unknown",

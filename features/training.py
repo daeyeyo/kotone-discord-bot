@@ -1,10 +1,13 @@
 import random
+import sqlite3
 import discord
 from kotone.client import (
     slash_command,
 )
 from kotone.game import (
+    get_preferred_card,
     perform_card,
+    save_preferred_card,
     train_card,
 )
 from kotone.images import (
@@ -157,11 +160,42 @@ GRADE_REACTIONS = {
 }
 
 
-@slash_command(name="train")
-async def train(ctx, serial: str):
+@slash_command(
+    name="train",
+    descriptions={
+        "serial": "Train this card instead of your saved default.",
+        "set": "Save this card as your default training card.",
+    },
+)
+async def train(ctx, serial: str = None, set: str = None):
     """Train a card's specialty skill (4h cooldown)."""
+    if serial is not None and set is not None:
+        await ctx.reply("Use either `serial` or `set`, not both.")
+        return
+    if set is not None:
+        try:
+            selected_serial = save_preferred_card(ctx.author.id, "train", set)
+        except ValueError as error:
+            await ctx.reply(str(error))
+            return
+        except sqlite3.Error as error:
+            print(f"Error saving default training card: {error}")
+            await ctx.reply("The default training card couldn't be saved.")
+            return
+        await ctx.reply(
+            f"Your default training card is now `{selected_serial}`. "
+            "Use `/train` to train it, or provide `serial` to train another."
+        )
+        return
+
     try:
-        result = train_card(ctx.author.id, serial.strip())
+        if serial is not None:
+            selected_serial = serial.strip()
+            if not selected_serial:
+                raise ValueError("Enter a valid card serial.")
+        else:
+            selected_serial = get_preferred_card(ctx.author.id, "train")
+        result = train_card(ctx.author.id, selected_serial)
     except ValueError as error:
         await ctx.reply(str(error))
         return
@@ -195,11 +229,46 @@ async def train(ctx, serial: str):
     await ctx.reply(message)
 
 
-@slash_command(name="perform")
-async def perform(ctx, serial: str):
+@slash_command(
+    name="perform",
+    descriptions={
+        "serial": "Perform with this card instead of your saved default.",
+        "set": "Save this card as your default performance card.",
+    },
+)
+async def perform(ctx, serial: str = None, set: str = None):
     """Perform with a card to earn COMO (4h cooldown)."""
+    if serial is not None and set is not None:
+        await ctx.reply("Use either `serial` or `set`, not both.")
+        return
+    if set is not None:
+        try:
+            selected_serial = save_preferred_card(ctx.author.id, "perform", set)
+        except ValueError as error:
+            await ctx.reply(str(error))
+            return
+        except sqlite3.Error as error:
+            print(f"Error saving default performance card: {error}")
+            await ctx.reply("The default performance card couldn't be saved.")
+            return
+        await ctx.reply(
+            f"Your default performance card is now `{selected_serial}`. "
+            "Use `/perform` to perform with it, or provide `serial` to use another."
+        )
+        return
+
     try:
-        result = perform_card(ctx.author.id, str(ctx.author), serial.strip())
+        if serial is not None:
+            selected_serial = serial.strip()
+            if not selected_serial:
+                raise ValueError("Enter a valid card serial.")
+        else:
+            selected_serial = get_preferred_card(ctx.author.id, "perform")
+        result = perform_card(
+            ctx.author.id,
+            str(ctx.author),
+            selected_serial,
+        )
     except ValueError as error:
         await ctx.reply(str(error))
         return

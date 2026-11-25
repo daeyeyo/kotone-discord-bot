@@ -1,6 +1,10 @@
 .env
+*.env
+env
 Token.txt
 __pycache__/
+.ruff_cache/
+.vscode/
 .venv/
 venv/
 kpop_cards.db
