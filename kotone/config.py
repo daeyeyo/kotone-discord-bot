@@ -113,6 +113,14 @@ TRAIN_GAIN_MAX = 6
 TRAIN_PERFECT_CHANCE = 0.1
 TRAIN_PERFECT_BONUS = 3
 PERFORM_COOLDOWN_SECONDS = 4 * 60 * 60
+HUNT_COOLDOWN_SECONDS = 4 * 60 * 60
+HUNT_COMO_REWARDS = {
+    "Common": (20, 35),
+    "Rare": (35, 60),
+    "Epic": (70, 120),
+    "Legendary": (140, 220),
+    "Mythic": (250, 400),
+}
 PERFORM_BASE_SCORE = 25
 PERFORM_SKILL_WEIGHT = 1.7
 PERFORM_RARITY_MULTIPLIERS = {
@@ -133,5 +141,10 @@ MINIGAMES = (
         "tripleS Trivia",
         "Answer tripleS trivia questions to earn COMO.",
         "/trivia",
+    ),
+    (
+        "Card Hunt",
+        "Send a card into the forest to find COMO and another card.",
+        "/hunt",
     ),
 )

@@ -4,10 +4,13 @@ import discord
 from discord.ui import Button, View
 from eras import ERAS
 from kotone.client import (
+    format_fallback_display_name,
+    resolve_discord_user_info,
     slash_command,
 )
 from kotone.db import (
     get_db,
+    sync_user_username,
 )
 
 @slash_command(
@@ -39,13 +42,53 @@ async def market(ctx):
             await ctx.reply("The market is empty. List a card with `/list`!")
             return
 
+        seller_ids = {row[2] for row in listings if row[2] is not None}
+        stored_seller_names = {}
+        if seller_ids:
+            placeholders = ",".join("?" for _ in seller_ids)
+            with get_db() as conn:
+                c = conn.cursor()
+                c.execute(
+                    f"SELECT user_id, username, display_name FROM users WHERE user_id IN ({placeholders})",
+                    tuple(seller_ids),
+                )
+                stored_seller_names = {
+                    row[0]: (row[1], row[2])
+                    for row in c.fetchall()
+                }
+
+        seller_names = {}
+        fetch_budget = [10]
+        for seller_id in sorted(seller_ids):
+            stored_username, stored_display_name = stored_seller_names.get(
+                seller_id,
+                (None, None),
+            )
+            display_name, fetched_names, _ = await resolve_discord_user_info(
+                ctx.bot,
+                seller_id,
+                guild=ctx.guild,
+                stored_display_name=stored_display_name,
+                stored_username=stored_username,
+                fetch_budget=fetch_budget,
+            )
+            seller_names[seller_id] = discord.utils.escape_markdown(display_name)
+            if fetched_names is not None:
+                fetched_display, fetched_username = fetched_names
+                sync_user_username(
+                    seller_id,
+                    username=fetched_username,
+                    display_name=fetched_display,
+                )
+
         # Create paginated view (reuse InventoryView-like structure)
         # We'll make a simple view with page buttons
         class MarketView(View):
-            def __init__(self, listings, ctx):
+            def __init__(self, listings, ctx, seller_names):
                 super().__init__(timeout=120)
                 self.listings = listings
                 self.ctx = ctx
+                self.seller_names = seller_names
                 self.current_page = 0
                 self.items_per_page = 5
                 self.total_pages = (len(listings) + self.items_per_page - 1) // self.items_per_page
@@ -75,12 +118,12 @@ async def market(ctx):
                     except KeyError:
                         member_name = "Unknown"
                         era_name = "Unknown"
-                    # Get seller name
-                    with get_db() as conn2:
-                        c2 = conn2.cursor()
-                        c2.execute("SELECT username FROM users WHERE user_id=?", (seller_id,))
-                        seller_row = c2.fetchone()
-                        seller_name = seller_row[0] if seller_row else "Unknown"
+                    seller_name = self.seller_names.get(
+                        seller_id,
+                        discord.utils.escape_markdown(
+                            format_fallback_display_name(seller_id)
+                        ),
+                    )
                     embed.add_field(
                         name=f"{serial} - {member_name}",
                         value=f"Era: {era_name} • Rarity: {rarity}\nPrice: **{price} COMO** • Seller: {seller_name}",
@@ -106,7 +149,7 @@ async def market(ctx):
                 self.update_buttons()
                 await interaction.response.edit_message(embed=self.get_embed(), view=self)
 
-        view = MarketView(listings, ctx)
+        view = MarketView(listings, ctx, seller_names)
         embed = view.get_embed()
         await ctx.reply(embed=embed, view=view)
 

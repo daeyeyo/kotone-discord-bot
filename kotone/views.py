@@ -8,6 +8,7 @@ from eras import ERAS
 from kotone.client import (
     SLASH_COMMANDS,
     SLASH_COMMAND_ALIASES,
+    preferred_discord_display_name,
 )
 from kotone.config import (
     RARITIES,
@@ -149,6 +150,30 @@ class ClaimButton(Button):
                                     FROM cards WHERE serial=?''', 
                                  (self.card_serial,))
                         card_details = c.fetchone()
+                        claimant_username = (
+                            getattr(interaction.user, "name", None)
+                            or str(interaction.user)
+                        ).strip()
+                        claimant_display_name = preferred_discord_display_name(
+                            interaction.user
+                        )
+                        c.execute(
+                            '''INSERT INTO users (user_id, username, display_name)
+                               VALUES (?, ?, ?)
+                               ON CONFLICT(user_id) DO UPDATE SET
+                                   username = excluded.username,
+                                   display_name = CASE
+                                       WHEN COALESCE(users.custom_display_name, 0) = 0
+                                       THEN excluded.display_name
+                                       ELSE users.display_name
+                                   END
+                               WHERE users.username IS NULL
+                                  OR users.username != excluded.username
+                                  OR (COALESCE(users.custom_display_name, 0) = 0
+                                      AND (users.display_name IS NULL
+                                           OR users.display_name != excluded.display_name))''',
+                            (user_id, claimant_username, claimant_display_name),
+                        )
                         
                         # Commit the transaction
                         conn.commit()
@@ -997,9 +1022,9 @@ HELP_CATEGORIES = (
     (
         "🎴 Cards",
         (
-            "drop", "spin", "inventory", "view", "train", "perform", "merge",
-            "collection", "dupes", "binder", "give", "target", "bias", "bio",
-            "profile", "stats",
+            "drop", "spin", "inventory", "view", "train", "perform", "hunt",
+            "merge", "collection", "dupes", "binder", "give", "target", "bias",
+            "bio", "profile", "stats", "leaderboard",
         ),
     ),
     ("🏪 Market", ("market", "list", "unlist", "buy")),
@@ -1007,7 +1032,7 @@ HELP_CATEGORIES = (
         "🎮 Fun & utility",
         (
             "help", "cooldown", "remind", "afk", "minigame", "trivia",
-            "8ball", "choose", "rob",
+            "8ball", "choose", "rob", "setname",
         ),
     ),
 )

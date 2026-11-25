@@ -3,6 +3,8 @@ import random
 import time
 from eras import ERAS
 from kotone.config import (
+    HUNT_COMO_REWARDS,
+    HUNT_COOLDOWN_SECONDS,
     MEMBER_SPECIALTY,
     PERFORM_BASE_SCORE,
     PERFORM_COOLDOWN_SECONDS,
@@ -280,6 +282,61 @@ def _set_user_cooldown(cursor, user_id, cooldown_type, duration):
     return expires_at
 
 
+VALID_CARD_PREFERENCE_ACTIONS = ("train", "perform", "hunt")
+
+
+def save_preferred_card(user_id, action, serial):
+    """Save a player's default card serial for train, perform, or hunt."""
+    if action not in VALID_CARD_PREFERENCE_ACTIONS:
+        raise ValueError(f"Unsupported card preference action: {action}")
+    cleaned_serial = serial.strip() if serial is not None else ""
+    if not cleaned_serial:
+        raise ValueError("Enter the card serial to save.")
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT 1 FROM cards WHERE serial=? AND owner_id=?",
+            (cleaned_serial, user_id),
+        )
+        if cursor.fetchone() is None:
+            raise ValueError("You don't own a card with that serial.")
+        cursor.execute(
+            '''INSERT OR REPLACE INTO user_card_preferences
+               (user_id, action, card_serial)
+               VALUES (?, ?, ?)''',
+            (user_id, action, cleaned_serial),
+        )
+    return cleaned_serial
+
+
+def get_preferred_card(user_id, action):
+    """Return the player's saved default card serial if they still own it."""
+    if action not in VALID_CARD_PREFERENCE_ACTIONS:
+        raise ValueError(f"Unsupported card preference action: {action}")
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            '''SELECT p.card_serial, c.serial
+               FROM user_card_preferences p
+               LEFT JOIN cards c
+                 ON c.serial = p.card_serial AND c.owner_id = p.user_id
+               WHERE p.user_id = ? AND p.action = ?''',
+            (user_id, action),
+        )
+        row = cursor.fetchone()
+    if row is None:
+        raise ValueError(
+            f"No default card is set for {action}. "
+            f"Use `/{action} set:SERIAL` first."
+        )
+    if row[1] is None:
+        raise ValueError(
+            f"Your saved {action} card is no longer in your collection. "
+            f"Choose a new one with `/{action} set:SERIAL`."
+        )
+    return row[0]
+
+
 def _get_card_for_ability(cursor, user_id, serial, action):
     cursor.execute(
         '''SELECT member_code, era, rarity FROM cards
@@ -438,11 +495,11 @@ def perform_card(user_id, username, serial):
             new_balance = payout
         else:
             cursor.execute(
-                '''UPDATE users SET username=?, como=como+?
+                '''UPDATE users SET username=?, como=COALESCE(como, 0)+?
                    WHERE user_id=?''',
                 (username, payout, user_id),
             )
-            new_balance = user[0] + payout
+            new_balance = (user[0] or 0) + payout
 
         expires_at = _set_user_cooldown(
             cursor,
@@ -466,6 +523,102 @@ def perform_card(user_id, username, serial):
         "payout": payout,
         "new_balance": new_balance,
         "performances": performances,
+        "cooldown_until": expires_at,
+    }
+
+
+def hunt_card(user_id, username, serial):
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("BEGIN IMMEDIATE")
+
+        remaining = _get_active_cooldown(cursor, user_id, "hunt")
+        if remaining > 0:
+            raise ValueError(
+                "Your hunt cooldown is still active for "
+                f"**{format_duration(remaining)}**."
+            )
+
+        member_code, era, rarity = _get_card_for_ability(
+            cursor,
+            user_id,
+            serial,
+            "sending it on a hunt",
+        )
+        skills = ensure_card_skill(cursor, serial, member_code, rarity)
+        progress = (
+            skills["points"] / skills["cap"]
+            if skills["training_sessions"]
+            else 0.0
+        )
+        rarity_weights = [
+            weight * (1 + progress if tier != "Common" else 1)
+            for tier, weight in RARITIES.items()
+        ]
+        reward_rarity = random.choices(
+            list(RARITIES),
+            weights=rarity_weights,
+            k=1,
+        )[0]
+        reward_card = generate_card(
+            forced_rarity=reward_rarity,
+            connection=conn,
+        )
+
+        base_reward = random.randint(*HUNT_COMO_REWARDS[reward_rarity])
+        payout = round(base_reward * (1 + progress * 0.5))
+        cursor.execute(
+            "SELECT como FROM users WHERE user_id=?",
+            (user_id,),
+        )
+        user = cursor.fetchone()
+        if user is None:
+            cursor.execute(
+                '''INSERT INTO users (user_id, username, como)
+                   VALUES (?, ?, ?)''',
+                (user_id, username, payout),
+            )
+            new_balance = payout
+        else:
+            cursor.execute(
+                '''UPDATE users SET username=?, como=COALESCE(como, 0)+?
+                   WHERE user_id=?''',
+                (username, payout, user_id),
+            )
+            new_balance = (user[0] or 0) + payout
+
+        cursor.execute(
+            '''INSERT INTO cards
+               (serial, member_code, era, rarity, owner_id, obtained_at)
+               VALUES (?, ?, ?, ?, ?, ?)''',
+            (
+                reward_card["serial"],
+                reward_card["member_code"],
+                reward_card["era"],
+                reward_card["rarity"],
+                user_id,
+                datetime.datetime.now().isoformat(),
+            ),
+        )
+        expires_at = _set_user_cooldown(
+            cursor,
+            user_id,
+            "hunt",
+            HUNT_COOLDOWN_SECONDS,
+        )
+
+    return {
+        "hunting_serial": serial,
+        "hunting_card_name": ERAS[era]["members"][member_code]["name"],
+        "hunting_rarity": rarity,
+        "skill": skills["skill"],
+        "points": skills["points"],
+        "cap": skills["cap"],
+        "training_sessions": skills["training_sessions"],
+        "training_bonus": progress,
+        "reward_card": reward_card,
+        "payout": payout,
+        "new_balance": new_balance,
         "cooldown_until": expires_at,
     }
 

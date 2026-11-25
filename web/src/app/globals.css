@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+:root {
+  --bg-canvas: #07070d;
+  --bg-surface: #10101a;
+  --bg-elevated: #171726;
+  --accent-pink: #ff6b8b;
+  --accent-violet: #a855f7;
+  --accent-cyan: #22d3ee;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--bg-canvas);
+    color: #f4f4f8;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255, 107, 139, 0.14), transparent),
+      radial-gradient(ellipse 60% 45% at 90% 10%, rgba(168, 85, 247, 0.1), transparent),
+      radial-gradient(ellipse 50% 40% at 10% 85%, rgba(34, 211, 238, 0.06), transparent);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+}
+
+@keyframes holo-sweep {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.holo-foil {
+  background: linear-gradient(
+    125deg,
+    rgba(255, 107, 139, 0.12) 0%,
+    rgba(168, 85, 247, 0.16) 28%,
+    rgba(34, 211, 238, 0.16) 55%,
+    rgba(251, 191, 36, 0.14) 80%,
+    rgba(255, 107, 139, 0.12) 100%
+  );
+  background-size: 220% 220%;
+  animation: holo-sweep 8s ease infinite;
+}
+
+.binder-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Custom subtle scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a12;
+}
+::-webkit-scrollbar-thumb {
+  background: #27273a;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3b3b56;
+}
