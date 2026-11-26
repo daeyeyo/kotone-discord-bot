@@ -123,6 +123,7 @@ class ClaimButton(Button):
         await interaction.response.defer()
         
         claim_completed = False
+        card_details = None
         try:
             # Use database transaction with exclusive lock to prevent race conditions
             with get_db() as conn:
@@ -178,58 +179,60 @@ class ClaimButton(Button):
                         # Commit the transaction
                         conn.commit()
                         claim_completed = True
-                        
-                        # Set claim cooldown
-                        set_cooldown(user_id, 'claim', 300)
 
-                        member_code, era, rarity = card_details
-                        claimed_card = {
-                            "serial": self.card_serial,
-                            "member_code": member_code,
-                            "era": era,
-                            "rarity": rarity,
-                            "name": ERAS[era]["members"][member_code]["name"],
-                            "full_name": ERAS[era]["members"][member_code]["full_name"],
-                        }
-                        claimed_embed = create_drop_embed(
-                            "🎉 Card Claimed!",
-                            f"{interaction.user.mention} claimed **{rarity} "
-                            f"{claimed_card['name']}** ({self.card_serial}).",
-                            [claimed_card],
-                            show_full_name=True,
-                        )
-                        claimed_embed.set_image(
-                            url=get_card_image(
-                                era,
-                                member_code,
-                                rarity,
-                                animated=True,
-                            )
-                        )
-                        await interaction.followup.send(
-                            embed=claimed_embed,
-                        )
-                        
-                        self.disabled = True
-                        if dropper_id == user_id:
-                            self.view.dropper_claimed = True
-                            self.view.stop()
-                        for child in self.view.children:
-                            if dropper_id == user_id:
-                                child.disabled = True
-                        if dropper_id is None:
-                            await replace_remaining_drop_message(
-                                interaction.message,
-                                self.view,
-                            )
-                        
-                        return
-                
+            if not claim_completed:
                 # Card was already claimed
                 await interaction.followup.send(
                     "This card has already been claimed!", 
                     ephemeral=True
                 )
+                return
+
+            # Set claim cooldown outside the exclusive card transaction
+            set_cooldown(user_id, 'claim', 300)
+
+            member_code, era, rarity = card_details
+            claimed_card = {
+                "serial": self.card_serial,
+                "member_code": member_code,
+                "era": era,
+                "rarity": rarity,
+                "name": ERAS[era]["members"][member_code]["name"],
+                "full_name": ERAS[era]["members"][member_code]["full_name"],
+            }
+            claimed_embed = create_drop_embed(
+                "🎉 Card Claimed!",
+                f"{interaction.user.mention} claimed **{rarity} "
+                f"{claimed_card['name']}** ({self.card_serial}).",
+                [claimed_card],
+                show_full_name=True,
+            )
+            claimed_embed.set_image(
+                url=get_card_image(
+                    era,
+                    member_code,
+                    rarity,
+                    animated=True,
+                )
+            )
+            await interaction.followup.send(
+                embed=claimed_embed,
+            )
+            
+            self.disabled = True
+            if dropper_id == user_id:
+                self.view.dropper_claimed = True
+                self.view.stop()
+            for child in self.view.children:
+                if dropper_id == user_id:
+                    child.disabled = True
+            if dropper_id is None:
+                await replace_remaining_drop_message(
+                    interaction.message,
+                    self.view,
+                )
+            
+            return
                 
         except sqlite3.Error as e:
             print(f"Database error during claim: {e}")

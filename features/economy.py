@@ -36,6 +36,7 @@ async def daily(ctx):
     daily_card = generate_card(target=get_user_target(user_id))
     for attempt in range(3):
         try:
+            reply_message = None
             with get_db() as conn:
                 c = conn.cursor()
                 # Acquire write lock immediately
@@ -54,90 +55,92 @@ async def daily(ctx):
                         hours = remaining // 3600
                         minutes = (remaining % 3600) // 60
                         seconds = remaining % 60
-                        await ctx.reply(
+                        reply_message = (
                             f"You've already claimed your daily COMO today! "
                             f"You can claim again in **{hours}h {minutes}m {seconds}s**."
                         )
-                        return
                     else:
                         # Expired cooldown – delete it
                         c.execute('''DELETE FROM cooldowns
                                      WHERE user_id=? AND cooldown_type=?''',
                                   (user_id, 'daily'))
 
-                # --- Process daily claim ---
-                # Check if user exists
-                c.execute("SELECT * FROM users WHERE user_id=?", (user_id,))
-                user = c.fetchone()
+                if reply_message is None:
+                    # --- Process daily claim ---
+                    # Check if user exists
+                    c.execute("SELECT * FROM users WHERE user_id=?", (user_id,))
+                    user = c.fetchone()
 
-                if user:
-                    last_daily = datetime.datetime.strptime(user[3], '%Y-%m-%d').date() if user[3] else None
-                    current_streak = user[2]
-                    current_como = user[4]
-                    new_streak, streak_shield_used = advance_daily_streak(
+                    if user:
+                        last_daily = datetime.datetime.strptime(user[3], '%Y-%m-%d').date() if user[3] else None
+                        current_streak = user[2]
+                        current_como = user[4]
+                        new_streak, streak_shield_used = advance_daily_streak(
+                            c,
+                            user_id,
+                            last_daily,
+                            today,
+                            current_streak,
+                        )
+
+                        # Calculate reward
+                        base_reward = random.randint(100, 200)
+                        if new_streak >= 5:
+                            reward = base_reward * 2
+                            bonus_msg = " (2x streak bonus applied!)"
+                        else:
+                            reward = base_reward
+                            bonus_msg = ""
+                        if streak_shield_used:
+                            bonus_msg += " (Streak Shield used!)"
+
+                        new_como = current_como + reward
+
+                        # Update user record
+                        c.execute('''UPDATE users
+                                     SET username=?, daily_streak=?, last_daily=?, como=?
+                                     WHERE user_id=?''',
+                                  (username, new_streak, str(today), new_como, user_id))
+                    else:
+                        # New user
+                        reward = random.randint(100, 200)
+                        new_streak = 1
+                        new_como = reward
+                        bonus_msg = ""
+                        c.execute('''INSERT INTO users
+                                     (user_id, username, daily_streak, last_daily, como)
+                                     VALUES (?, ?, ?, ?, ?)''',
+                                  (user_id, username, new_streak, str(today), new_como))
+
+                    # Set 24h cooldown
+                    c.execute(
+                        "INSERT INTO cards (serial, member_code, era, rarity, owner_id, obtained_at) VALUES (?, ?, ?, ?, ?, ?)",
+                        (daily_card['serial'], daily_card['member_code'], daily_card['era'], daily_card['rarity'], user_id, str(datetime.datetime.now())),
+                    )
+                    expires_at = time.time() + 86400
+                    c.execute('''INSERT OR REPLACE INTO cooldowns
+                                 (user_id, cooldown_type, expires_at)
+                                 VALUES (?, ?, ?)''',
+                              (user_id, 'daily', expires_at))
+                    schedule_cooldown_reminder(
                         c,
                         user_id,
-                        last_daily,
-                        today,
-                        current_streak,
+                        'daily',
+                        expires_at,
                     )
 
-                    # Calculate reward
-                    base_reward = random.randint(100, 200)
-                    if new_streak >= 5:
-                        reward = base_reward * 2
-                        bonus_msg = " (2x streak bonus applied!)"
-                    else:
-                        reward = base_reward
-                        bonus_msg = ""
-                    if streak_shield_used:
-                        bonus_msg += " (Streak Shield used!)"
+                    # Commit everything
+                    conn.commit()
 
-                    new_como = current_como + reward
+                    reply_message = (
+                        f"You've received **{reward} COMO**!{bonus_msg}\n"
+                        f"Daily card: **{daily_card['rarity']} {daily_card['name']}** ({daily_card['serial']})\n"
+                        f"Current streak: **{new_streak}** days\n"
+                        f"Total COMO: **{new_como}**"
+                    )
 
-                    # Update user record
-                    c.execute('''UPDATE users
-                                 SET username=?, daily_streak=?, last_daily=?, como=?
-                                 WHERE user_id=?''',
-                              (username, new_streak, str(today), new_como, user_id))
-                else:
-                    # New user
-                    reward = random.randint(100, 200)
-                    new_streak = 1
-                    new_como = reward
-                    bonus_msg = ""
-                    c.execute('''INSERT INTO users
-                                 (user_id, username, daily_streak, last_daily, como)
-                                 VALUES (?, ?, ?, ?, ?)''',
-                              (user_id, username, new_streak, str(today), new_como))
-
-                # Set 24h cooldown
-                c.execute(
-                    "INSERT INTO cards (serial, member_code, era, rarity, owner_id, obtained_at) VALUES (?, ?, ?, ?, ?, ?)",
-                    (daily_card['serial'], daily_card['member_code'], daily_card['era'], daily_card['rarity'], user_id, str(datetime.datetime.now())),
-                )
-                expires_at = time.time() + 86400
-                c.execute('''INSERT OR REPLACE INTO cooldowns
-                             (user_id, cooldown_type, expires_at)
-                             VALUES (?, ?, ?)''',
-                          (user_id, 'daily', expires_at))
-                schedule_cooldown_reminder(
-                    c,
-                    user_id,
-                    'daily',
-                    expires_at,
-                )
-
-                # Commit everything
-                conn.commit()
-
-                await ctx.reply(
-                    f"You've received **{reward} COMO**!{bonus_msg}\n"
-                    f"Daily card: **{daily_card['rarity']} {daily_card['name']}** ({daily_card['serial']})\n"
-                    f"Current streak: **{new_streak}** days\n"
-                    f"Total COMO: **{new_como}**"
-                )
-                return  # Success – exit the retry loop
+            await ctx.reply(reply_message)
+            return  # Success – exit the retry loop
 
         except sqlite3.OperationalError as e:
             if "database is locked" in str(e) and attempt < 2:
@@ -164,14 +167,14 @@ async def balance(ctx, user: discord.Member = None):
             c.execute("SELECT como FROM users WHERE user_id=?", (user_id,))
             result = c.fetchone()
 
-            if result:
-                como = result[0]
-                await ctx.reply(f"{user.display_name} has {como} COMO")
+        if result:
+            como = result[0]
+            await ctx.reply(f"{user.display_name} has {como} COMO")
+        else:
+            if user.id == ctx.author.id:
+                await ctx.reply("You don't have a COMO balance yet. Use `/daily` to get started!")
             else:
-                if user.id == ctx.author.id:
-                    await ctx.reply("You don't have a COMO balance yet. Use `/daily` to get started!")
-                else:
-                    await ctx.reply(f"{user.display_name} doesn't have a COMO balance yet.")
+                await ctx.reply(f"{user.display_name} doesn't have a COMO balance yet.")
     except Exception as e:
         print(f"Error in balance command: {e}")
         await ctx.reply("An error occurred. Please try again later.")
@@ -393,6 +396,7 @@ async def weekly(ctx):
     user_id = ctx.author.id
     username = str(ctx.author)
     weekly_card = generate_card(target=get_user_target(user_id))
+    cooldown_message = None
 
     try:
         with get_db() as conn:
@@ -408,59 +412,64 @@ async def weekly(ctx):
                 if remaining > 0:
                     days = remaining // 86400
                     hours = (remaining % 86400) // 3600
-                    await ctx.reply(
+                    cooldown_message = (
                         f"You've already claimed your weekly reward! "
                         f"You can claim again in **{days}d {hours}h**."
                     )
-                    return
-                c.execute('''DELETE FROM cooldowns
-                             WHERE user_id=? AND cooldown_type=?''',
-                          (user_id, 'weekly'))
+                else:
+                    c.execute('''DELETE FROM cooldowns
+                                 WHERE user_id=? AND cooldown_type=?''',
+                              (user_id, 'weekly'))
 
-            # Get or create user
-            c.execute("SELECT como FROM users WHERE user_id=?", (user_id,))
-            user = c.fetchone()
-            if user:
-                current_como = user[0]
-            else:
-                # Create new user with 0 COMO
-                c.execute('''INSERT INTO users (user_id, username, daily_streak, last_daily, como)
-                             VALUES (?, ?, 0, NULL, 0)''',
-                          (user_id, username))
-                current_como = 0
+            if cooldown_message is None:
+                # Get or create user
+                c.execute("SELECT como FROM users WHERE user_id=?", (user_id,))
+                user = c.fetchone()
+                if user:
+                    current_como = user[0]
+                else:
+                    # Create new user with 0 COMO
+                    c.execute('''INSERT INTO users (user_id, username, daily_streak, last_daily, como)
+                                 VALUES (?, ?, 0, NULL, 0)''',
+                              (user_id, username))
+                    current_como = 0
 
-            # Reward: 500-1000 COMO (more than daily)
-            reward = random.randint(500, 1000)
-            new_como = current_como + reward
+                # Reward: 500-1000 COMO (more than daily)
+                reward = random.randint(500, 1000)
+                new_como = current_como + reward
 
-            # Update balance
-            c.execute("UPDATE users SET como=? WHERE user_id=?", (new_como, user_id))
+                # Update balance
+                c.execute("UPDATE users SET como=? WHERE user_id=?", (new_como, user_id))
 
-            c.execute(
-                '''INSERT INTO cards
-                   (serial, member_code, era, rarity, owner_id, obtained_at)
-                   VALUES (?, ?, ?, ?, ?, ?)''',
-                (
-                    weekly_card['serial'],
-                    weekly_card['member_code'],
-                    weekly_card['era'],
-                    weekly_card['rarity'],
+                c.execute(
+                    '''INSERT INTO cards
+                       (serial, member_code, era, rarity, owner_id, obtained_at)
+                       VALUES (?, ?, ?, ?, ?, ?)''',
+                    (
+                        weekly_card['serial'],
+                        weekly_card['member_code'],
+                        weekly_card['era'],
+                        weekly_card['rarity'],
+                        user_id,
+                        str(datetime.datetime.now()),
+                    ),
+                )
+
+                # Set 7-day cooldown
+                expires_at = time.time() + 604800
+                c.execute("INSERT OR REPLACE INTO cooldowns (user_id, cooldown_type, expires_at) VALUES (?, ?, ?)", (user_id, 'weekly', expires_at))
+                schedule_cooldown_reminder(
+                    c,
                     user_id,
-                    str(datetime.datetime.now()),
-                ),
-            )
+                    'weekly',
+                    expires_at,
+                )
 
-            # Set 7-day cooldown
-            expires_at = time.time() + 604800
-            c.execute("INSERT OR REPLACE INTO cooldowns (user_id, cooldown_type, expires_at) VALUES (?, ?, ?)", (user_id, 'weekly', expires_at))
-            schedule_cooldown_reminder(
-                c,
-                user_id,
-                'weekly',
-                expires_at,
-            )
+                conn.commit()
 
-            conn.commit()
+        if cooldown_message is not None:
+            await ctx.reply(cooldown_message)
+            return
 
         await ctx.reply(
             f"You've received your weekly reward of **{reward} COMO**! "
@@ -509,6 +518,8 @@ async def transfer(ctx, recipient: discord.Member, amount: int):
         await ctx.reply("Amount must be a positive integer!")
         return
 
+    error_message = None
+
     try:
         with get_db() as conn:
             c = conn.cursor()
@@ -518,32 +529,35 @@ async def transfer(ctx, recipient: discord.Member, amount: int):
             c.execute("SELECT como FROM users WHERE user_id=?", (sender_id,))
             sender_row = c.fetchone()
             if not sender_row:
-                await ctx.reply("You don't have any COMO yet. Use `/daily` to get some!")
-                return
-            sender_balance = sender_row[0]
-            if sender_balance < amount:
-                await ctx.reply(f"You don't have enough COMO! You have {sender_balance}.")
-                return
-
-            # Get recipient's balance (or create if not exists)
-            c.execute("SELECT como FROM users WHERE user_id=?", (recipient_id,))
-            recipient_row = c.fetchone()
-            if recipient_row:
-                recipient_balance = recipient_row[0]
+                error_message = "You don't have any COMO yet. Use `/daily` to get some!"
             else:
-                # Create user with 0 COMO
-                c.execute('''INSERT INTO users (user_id, username, daily_streak, last_daily, como)
-                             VALUES (?, ?, 0, NULL, 0)''',
-                          (recipient_id, str(recipient)))
-                recipient_balance = 0
+                sender_balance = sender_row[0]
+                if sender_balance < amount:
+                    error_message = f"You don't have enough COMO! You have {sender_balance}."
+                else:
+                    # Get recipient's balance (or create if not exists)
+                    c.execute("SELECT como FROM users WHERE user_id=?", (recipient_id,))
+                    recipient_row = c.fetchone()
+                    if recipient_row:
+                        recipient_balance = recipient_row[0]
+                    else:
+                        # Create user with 0 COMO
+                        c.execute('''INSERT INTO users (user_id, username, daily_streak, last_daily, como)
+                                     VALUES (?, ?, 0, NULL, 0)''',
+                                  (recipient_id, str(recipient)))
+                        recipient_balance = 0
 
-            # Update balances
-            new_sender = sender_balance - amount
-            new_recipient = recipient_balance + amount
-            c.execute("UPDATE users SET como=? WHERE user_id=?", (new_sender, sender_id))
-            c.execute("UPDATE users SET como=? WHERE user_id=?", (new_recipient, recipient_id))
+                    # Update balances
+                    new_sender = sender_balance - amount
+                    new_recipient = recipient_balance + amount
+                    c.execute("UPDATE users SET como=? WHERE user_id=?", (new_sender, sender_id))
+                    c.execute("UPDATE users SET como=? WHERE user_id=?", (new_recipient, recipient_id))
 
-            conn.commit()
+                    conn.commit()
+
+        if error_message is not None:
+            await ctx.reply(error_message)
+            return
 
         await ctx.reply(f"✅ Successfully transferred **{amount} COMO** to {recipient.mention}!")
 

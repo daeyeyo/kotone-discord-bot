@@ -7,6 +7,8 @@ from contextlib import contextmanager
 _SYNCED_USERNAMES = {}
 _SYNCED_USERNAME_TTL = 600
 _PLACEHOLDER_USERNAME_RE = re.compile(r"^user_\d+$", re.IGNORECASE)
+_AFK_CACHE = {}
+_AFK_CACHE_LOADED = False
 
 
 def _clean_non_placeholder_name(value):
@@ -148,11 +150,81 @@ def set_user_display_name(user_id, display_name):
     return cleaned
 
 
+def load_afk_cache(conn=None):
+    """Load active guild AFK entries from SQLite into memory."""
+    global _AFK_CACHE_LOADED
+    if conn is None:
+        with get_db() as db_conn:
+            rows = db_conn.execute(
+                "SELECT guild_id, user_id, reason, since FROM guild_afk"
+            ).fetchall()
+    else:
+        rows = conn.execute(
+            "SELECT guild_id, user_id, reason, since FROM guild_afk"
+        ).fetchall()
+
+    fresh = {
+        (guild_id, user_id): (reason, since)
+        for guild_id, user_id, reason, since in rows
+    }
+    _AFK_CACHE.clear()
+    _AFK_CACHE.update(fresh)
+    _AFK_CACHE_LOADED = True
+
+
+def _ensure_afk_cache_loaded():
+    if not _AFK_CACHE_LOADED:
+        load_afk_cache()
+
+
+def set_guild_afk(guild_id, user_id, reason, since=None):
+    """Persist a guild AFK status and update the in-memory cache."""
+    since = time.time() if since is None else since
+    with get_db() as conn:
+        conn.execute(
+            '''INSERT OR REPLACE INTO guild_afk
+               (guild_id, user_id, reason, since)
+               VALUES (?, ?, ?, ?)''',
+            (guild_id, user_id, reason, since),
+        )
+    _AFK_CACHE[(guild_id, user_id)] = (reason, since)
+    return since
+
+
+def clear_guild_afk(guild_id, user_id):
+    """Clear a guild AFK status if cached active; avoids SQLite on cache miss."""
+    _ensure_afk_cache_loaded()
+    key = (guild_id, user_id)
+    if key not in _AFK_CACHE:
+        return False
+
+    with get_db() as conn:
+        cursor = conn.execute(
+            "DELETE FROM guild_afk WHERE guild_id=? AND user_id=?",
+            (guild_id, user_id),
+        )
+        removed = cursor.rowcount > 0
+    _AFK_CACHE.pop(key, None)
+    return removed
+
+
+def get_guild_afk_statuses(guild_id, user_ids):
+    """Return [(user_id, reason, since)] for mentioned users from memory."""
+    _ensure_afk_cache_loaded()
+    statuses = []
+    for user_id in user_ids:
+        entry = _AFK_CACHE.get((guild_id, user_id))
+        if entry is not None:
+            statuses.append((user_id, entry[0], entry[1]))
+    return statuses
+
+
 # Database context manager for safer connections
 @contextmanager
 def get_db():
     conn = sqlite3.connect('kpop_cards.db', timeout=10.0)
     conn.execute("PRAGMA busy_timeout=5000")
+    conn.execute("PRAGMA synchronous=NORMAL")
     try:
         yield conn
         conn.commit()
@@ -335,5 +407,6 @@ def init_db():
             )
         c.execute('''CREATE INDEX IF NOT EXISTS idx_cards_binder
                      ON cards(owner_id, in_binder)''')
+        load_afk_cache(conn)
 
 init_db()

@@ -584,6 +584,9 @@ async def binder_add(
 
     if target["type"] == "serial":
         serial = target["value"]
+        reply_args = None
+        changed = 0
+        card = None
         try:
             with get_db() as conn:
                 cursor = conn.cursor()
@@ -594,43 +597,39 @@ async def binder_add(
                 )
                 card = cursor.fetchone()
                 if card is None:
-                    await _reply_binder(ctx, "Card not found.", "Card Not Found")
-                    return
-                if card[0] != ctx.author.id:
-                    await _reply_binder(ctx, "You don't own that card.", "Not Your Card")
-                    return
-                if card[4]:
-                    await _reply_binder(
-                        ctx,
+                    reply_args = ("Card not found.", "Card Not Found")
+                elif card[0] != ctx.author.id:
+                    reply_args = ("You don't own that card.", "Not Your Card")
+                elif card[4]:
+                    reply_args = (
                         f"{_format_card(serial, card[1], card[2], card[3])} "
                         "is already in your binder.",
                         "Already Protected",
                     )
-                    return
-                cursor.execute(
-                    "SELECT 1 FROM market_listings WHERE card_serial=?",
-                    (serial,),
-                )
-                if cursor.fetchone():
-                    await _reply_binder(
-                        ctx,
-                        "That card is listed on the market. Unlist it with "
-                        "`/unlist` before adding it to your binder.",
-                        "Card Is Listed",
+                else:
+                    cursor.execute(
+                        "SELECT 1 FROM market_listings WHERE card_serial=?",
+                        (serial,),
                     )
-                    return
-                cursor.execute("BEGIN IMMEDIATE")
-                cursor.execute(
-                    '''UPDATE cards SET in_binder=1
-                       WHERE serial=? AND owner_id=? AND in_binder=0
-                         AND NOT EXISTS (
-                             SELECT 1 FROM market_listings m
-                             WHERE m.card_serial=cards.serial
-                         )''',
-                    (serial, ctx.author.id),
-                )
-                changed = cursor.rowcount
-                conn.commit()
+                    if cursor.fetchone():
+                        reply_args = (
+                            "That card is listed on the market. Unlist it with "
+                            "`/unlist` before adding it to your binder.",
+                            "Card Is Listed",
+                        )
+                    else:
+                        cursor.execute("BEGIN IMMEDIATE")
+                        cursor.execute(
+                            '''UPDATE cards SET in_binder=1
+                               WHERE serial=? AND owner_id=? AND in_binder=0
+                                 AND NOT EXISTS (
+                                     SELECT 1 FROM market_listings m
+                                     WHERE m.card_serial=cards.serial
+                                 )''',
+                            (serial, ctx.author.id),
+                        )
+                        changed = cursor.rowcount
+                        conn.commit()
         except sqlite3.Error as error:
             print(f"Database error while adding card to binder: {error}")
             await _reply_binder(
@@ -638,6 +637,10 @@ async def binder_add(
                 "The card couldn't be added due to a database error.",
                 "Binder Update Failed",
             )
+            return
+
+        if reply_args is not None:
+            await _reply_binder(ctx, reply_args[0], reply_args[1])
             return
 
         if changed:
@@ -754,6 +757,9 @@ async def binder_remove(
 
     if target["type"] == "serial":
         serial = target["value"]
+        reply_args = None
+        changed = 0
+        card = None
         try:
             with get_db() as conn:
                 cursor = conn.cursor()
@@ -764,27 +770,24 @@ async def binder_remove(
                 )
                 card = cursor.fetchone()
                 if card is None:
-                    await _reply_binder(ctx, "Card not found.", "Card Not Found")
-                    return
-                if card[0] != ctx.author.id:
-                    await _reply_binder(ctx, "You don't own that card.", "Not Your Card")
-                    return
-                if not card[4]:
-                    await _reply_binder(
-                        ctx,
+                    reply_args = ("Card not found.", "Card Not Found")
+                elif card[0] != ctx.author.id:
+                    reply_args = ("You don't own that card.", "Not Your Card")
+                elif not card[4]:
+                    reply_args = (
                         f"{_format_card(serial, card[1], card[2], card[3])} "
                         "is not in your binder.",
                         "Not Protected",
                     )
-                    return
-                cursor.execute("BEGIN IMMEDIATE")
-                cursor.execute(
-                    '''UPDATE cards SET in_binder=0
-                       WHERE serial=? AND owner_id=? AND in_binder=1''',
-                    (serial, ctx.author.id),
-                )
-                changed = cursor.rowcount
-                conn.commit()
+                else:
+                    cursor.execute("BEGIN IMMEDIATE")
+                    cursor.execute(
+                        '''UPDATE cards SET in_binder=0
+                           WHERE serial=? AND owner_id=? AND in_binder=1''',
+                        (serial, ctx.author.id),
+                    )
+                    changed = cursor.rowcount
+                    conn.commit()
         except sqlite3.Error as error:
             print(f"Database error while removing card from binder: {error}")
             await _reply_binder(
@@ -792,6 +795,10 @@ async def binder_remove(
                 "The card couldn't be removed due to a database error.",
                 "Binder Update Failed",
             )
+            return
+
+        if reply_args is not None:
+            await _reply_binder(ctx, reply_args[0], reply_args[1])
             return
 
         if changed:

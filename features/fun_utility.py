@@ -25,6 +25,7 @@ from kotone.cooldowns import (
 )
 from kotone.db import (
     get_db,
+    set_guild_afk,
     set_user_display_name,
     sync_user_username,
 )
@@ -313,6 +314,11 @@ async def stats(ctx, user: discord.Member = None):
     user = user or ctx.author
     user_id = user.id
 
+    rarity_counts = {}
+    era_counts = {}
+    como = 0
+    streak = 0
+
     try:
         with get_db() as conn:
             c = conn.cursor()
@@ -321,25 +327,26 @@ async def stats(ctx, user: discord.Member = None):
             c.execute('''SELECT COUNT(*) FROM cards WHERE owner_id=?''', (user_id,))
             total_cards = c.fetchone()[0]
 
-            if total_cards == 0:
-                await ctx.reply(f"{user.display_name} doesn't have any cards yet!")
-                return
+            if total_cards > 0:
+                # Get rarity breakdown
+                c.execute('''SELECT rarity, COUNT(*) FROM cards
+                            WHERE owner_id=? GROUP BY rarity''', (user_id,))
+                rarity_counts = dict(c.fetchall())
 
-            # Get rarity breakdown
-            c.execute('''SELECT rarity, COUNT(*) FROM cards
-                        WHERE owner_id=? GROUP BY rarity''', (user_id,))
-            rarity_counts = dict(c.fetchall())
+                # Get era breakdown
+                c.execute('''SELECT era, COUNT(*) FROM cards
+                            WHERE owner_id=? GROUP BY era''', (user_id,))
+                era_counts = dict(c.fetchall())
 
-            # Get era breakdown
-            c.execute('''SELECT era, COUNT(*) FROM cards
-                        WHERE owner_id=? GROUP BY era''', (user_id,))
-            era_counts = dict(c.fetchall())
+                # Get user info
+                c.execute('''SELECT como, daily_streak FROM users WHERE user_id=?''', (user_id,))
+                user_info = c.fetchone()
+                como = user_info[0] if user_info else 0
+                streak = user_info[1] if user_info else 0
 
-            # Get user info
-            c.execute('''SELECT como, daily_streak FROM users WHERE user_id=?''', (user_id,))
-            user_info = c.fetchone()
-            como = user_info[0] if user_info else 0
-            streak = user_info[1] if user_info else 0
+        if total_cards == 0:
+            await ctx.reply(f"{user.display_name} doesn't have any cards yet!")
+            return
 
         # Create embed
         embed = discord.Embed(
@@ -674,13 +681,7 @@ async def afk(ctx, *, reason: str = "AFK"):
         return
 
     try:
-        with get_db() as conn:
-            conn.execute(
-                '''INSERT OR REPLACE INTO guild_afk
-                   (guild_id, user_id, reason, since)
-                   VALUES (?, ?, ?, ?)''',
-                (ctx.guild.id, ctx.author.id, reason, time.time()),
-            )
+        set_guild_afk(ctx.guild.id, ctx.author.id, reason, time.time())
     except sqlite3.Error as error:
         print(f"Database error while setting AFK status: {error}")
         await ctx.reply("Your AFK status couldn't be saved due to a database error.")

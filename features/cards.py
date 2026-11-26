@@ -57,7 +57,6 @@ from kotone.views import (
     create_collection_embed,
 )
 from typing import Literal
-from io import BytesIO
 
 @slash_command(name='drop')
 async def drop(ctx):
@@ -91,6 +90,8 @@ async def drop(ctx):
         )
 
         # Store generated cards, consume a queued slot, and start cooldown atomically.
+        cooldown_remaining = None
+        cards_to_drop = None
         with get_db() as conn:
             c = conn.cursor()
             c.execute("BEGIN IMMEDIATE")
@@ -102,57 +103,63 @@ async def drop(ctx):
             )
             existing_cooldown = c.fetchone()
             if existing_cooldown and existing_cooldown[0] > now:
-                remaining = int(existing_cooldown[0] - now)
-                await ctx.reply(
-                    f"You're on cooldown! Please wait {remaining} seconds before using drop again."
-                )
-                return
-
-            c.execute(
-                "SELECT extra_drop_slots FROM user_item_effects WHERE user_id=?",
-                (user_id,),
-            )
-            current_slot_row = c.fetchone()
-            extra_slot_used = bool(
-                current_slot_row
-                and current_slot_row[0] > 0
-                and extra_slot_available
-                and len(cards) == 4
-            )
-            cards_to_drop = cards if extra_slot_used else cards[:3]
-            if extra_slot_used:
+                cooldown_remaining = int(existing_cooldown[0] - now)
+            else:
                 c.execute(
-                    '''UPDATE user_item_effects
-                       SET extra_drop_slots=extra_drop_slots-1
-                       WHERE user_id=? AND extra_drop_slots>0''',
+                    "SELECT extra_drop_slots FROM user_item_effects WHERE user_id=?",
                     (user_id,),
                 )
-                if c.rowcount != 1:
-                    raise RuntimeError("The extra drop slot changed before the drop.")
+                current_slot_row = c.fetchone()
+                extra_slot_used = bool(
+                    current_slot_row
+                    and current_slot_row[0] > 0
+                    and extra_slot_available
+                    and len(cards) == 4
+                )
+                cards_to_drop = cards if extra_slot_used else cards[:3]
+                if extra_slot_used:
+                    c.execute(
+                        '''UPDATE user_item_effects
+                           SET extra_drop_slots=extra_drop_slots-1
+                           WHERE user_id=? AND extra_drop_slots>0''',
+                        (user_id,),
+                    )
+                    if c.rowcount != 1:
+                        raise RuntimeError("The extra drop slot changed before the drop.")
 
-            for card in cards_to_drop:
-                c.execute('''INSERT INTO cards
-                            (serial, member_code, era, rarity, owner_id, obtained_at)
-                            VALUES (?, ?, ?, ?, NULL, NULL)''',
-                          (card['serial'], card['member_code'], card['era'], card['rarity']))
-            drop_expires_at = now + 600
-            c.execute(
-                '''INSERT OR REPLACE INTO cooldowns
-                   (user_id, cooldown_type, expires_at) VALUES (?, 'drop', ?)''',
-                (user_id, drop_expires_at),
+                for card in cards_to_drop:
+                    c.execute('''INSERT INTO cards
+                                (serial, member_code, era, rarity, owner_id, obtained_at)
+                                VALUES (?, ?, ?, ?, NULL, NULL)''',
+                              (card['serial'], card['member_code'], card['era'], card['rarity']))
+                drop_expires_at = now + 600
+                c.execute(
+                    '''INSERT OR REPLACE INTO cooldowns
+                       (user_id, cooldown_type, expires_at) VALUES (?, 'drop', ?)''',
+                    (user_id, drop_expires_at),
+                )
+                schedule_cooldown_reminder(
+                    c,
+                    user_id,
+                    'drop',
+                    drop_expires_at,
+                )
+
+        if cooldown_remaining is not None:
+            await ctx.reply(
+                f"You're on cooldown! Please wait {cooldown_remaining} seconds before using drop again."
             )
-            schedule_cooldown_reminder(
-                c,
-                user_id,
-                'drop',
-                drop_expires_at,
-            )
+            return
+
         cards = cards_to_drop
 
+        drop_image = await create_drop_embed_image(cards)
+        first_claim_expires_at = int(time.time()) + 30
         embed = create_drop_embed(
             "🎉 Card Drop! 🎉",
             (
-                f"{ctx.author.mention} has 30 seconds to claim one card first."
+                f"{ctx.author.mention}'s first-claim window ends "
+                f"<t:{first_claim_expires_at}:R>."
                 + (
                     "\n🍀 Your Drop Luck Booster is active!"
                     if drop_booster_active
@@ -161,14 +168,6 @@ async def drop(ctx):
             ),
             cards,
         )
-        drop_image = await create_drop_embed_image(cards)
-        drop_image_data = drop_image.fp.getvalue()
-
-        def create_drop_image_attachment():
-            return discord.File(
-                BytesIO(drop_image_data),
-                filename=DROP_CARD_IMAGE_FILENAME,
-            )
 
         # Create view with buttons for dropper
         view = View(timeout=30)
@@ -183,30 +182,7 @@ async def drop(ctx):
 
         # Send message with buttons
         drop_msg = await ctx.send(embed=embed, file=drop_image, view=view)
-
-        async def update_countdown():
-            nonlocal drop_msg
-            for seconds_remaining in range(25, -1, -5):
-                await asyncio.sleep(5)
-                if view.is_finished():
-                    return
-                async with view.refresh_lock:
-                    countdown_embed = drop_msg.embeds[0].copy()
-                    countdown_embed.set_image(
-                        url=f"attachment://{DROP_CARD_IMAGE_FILENAME}"
-                    )
-                    countdown_embed.description = (
-                        f"{ctx.author.mention} has {seconds_remaining} seconds left to claim one card first."
-                    )
-                    drop_msg = await drop_msg.edit(
-                        embed=countdown_embed,
-                        attachments=[create_drop_image_attachment()],
-                        view=view,
-                    )
-
-        countdown_task = asyncio.create_task(update_countdown())
         await view.wait()
-        countdown_task.cancel()
 
         for child in view.children:
             child.disabled = True
@@ -220,7 +196,7 @@ async def drop(ctx):
                 embed.description = description
                 drop_msg = await drop_msg.edit(
                     embed=embed,
-                    attachments=[create_drop_image_attachment()],
+                    attachments=drop_msg.attachments,
                     view=view,
                 )
 
@@ -304,6 +280,9 @@ async def spin(ctx, serial: str = ""):
         return
 
     today = datetime.date.today().isoformat()
+    error_message = None
+    wagered_card = None
+    spins_used = 0
     try:
         with get_db() as conn:
             cursor = conn.cursor()
@@ -314,54 +293,53 @@ async def spin(ctx, serial: str = ""):
             )
             card_row = cursor.fetchone()
             if card_row is None:
-                await ctx.reply("You don't own a card with that serial.")
-                return
-            member_code, era, rarity, in_binder = card_row
-            if in_binder:
-                await ctx.reply(
-                    "That card is in your binder. Remove it with "
-                    "`/binder remove` before spinning."
-                )
-                return
-            if rarity not in SPIN_REWARD_COUNTS:
-                await ctx.reply(
-                    "That card has an unsupported rarity and can't be spun."
-                )
-                return
-            cursor.execute(
-                "SELECT 1 FROM market_listings WHERE card_serial=?",
-                (serial,),
-            )
-            if cursor.fetchone():
-                await ctx.reply(
-                    "Unlist that card from the market before using it for a spin."
-                )
-                return
-            cursor.execute(
-                "SELECT spin_date, spins FROM spin_usage WHERE user_id=?",
-                (ctx.author.id,),
-            )
-            usage_row = cursor.fetchone()
-            spins_used = (
-                usage_row[1]
-                if usage_row and usage_row[0] == today
-                else 0
-            )
-            if spins_used >= SPIN_DAILY_LIMIT:
-                await ctx.reply(
-                    f"You've used all **{SPIN_DAILY_LIMIT} spins** for today. "
-                    "Your limit resets at local midnight."
-                )
-                return
-            member = ERAS[era]["members"][member_code]
-            wagered_card = {
-                "serial": serial,
-                "member_code": member_code,
-                "era": era,
-                "rarity": rarity,
-                "name": member["name"],
-                "full_name": member["full_name"],
-            }
+                error_message = "You don't own a card with that serial."
+            else:
+                member_code, era, rarity, in_binder = card_row
+                if in_binder:
+                    error_message = (
+                        "That card is in your binder. Remove it with "
+                        "`/binder remove` before spinning."
+                    )
+                elif rarity not in SPIN_REWARD_COUNTS:
+                    error_message = (
+                        "That card has an unsupported rarity and can't be spun."
+                    )
+                else:
+                    cursor.execute(
+                        "SELECT 1 FROM market_listings WHERE card_serial=?",
+                        (serial,),
+                    )
+                    if cursor.fetchone():
+                        error_message = (
+                            "Unlist that card from the market before using it for a spin."
+                        )
+                    else:
+                        cursor.execute(
+                            "SELECT spin_date, spins FROM spin_usage WHERE user_id=?",
+                            (ctx.author.id,),
+                        )
+                        usage_row = cursor.fetchone()
+                        spins_used = (
+                            usage_row[1]
+                            if usage_row and usage_row[0] == today
+                            else 0
+                        )
+                        if spins_used >= SPIN_DAILY_LIMIT:
+                            error_message = (
+                                f"You've used all **{SPIN_DAILY_LIMIT} spins** for today. "
+                                "Your limit resets at local midnight."
+                            )
+                        else:
+                            member = ERAS[era]["members"][member_code]
+                            wagered_card = {
+                                "serial": serial,
+                                "member_code": member_code,
+                                "era": era,
+                                "rarity": rarity,
+                                "name": member["name"],
+                                "full_name": member["full_name"],
+                            }
     except sqlite3.Error as error:
         print(f"Database error while preparing spin for {ctx.author.id}: {error}")
         await ctx.reply("Spin odds couldn't be checked due to a database error.")
@@ -369,6 +347,10 @@ async def spin(ctx, serial: str = ""):
     except KeyError as error:
         print(f"Could not prepare spin for {ctx.author.id}: {error}")
         await ctx.reply("That card's details couldn't be loaded for a spin.")
+        return
+
+    if error_message is not None:
+        await ctx.reply(error_message)
         return
 
     view = SpinConfirmationView(
@@ -1340,9 +1322,13 @@ async def give_card(ctx, recipient: discord.Member, serial: str):
         await ctx.reply("You can't give cards to bots!")
         return
 
+    error_message = None
+    card = None
+
     try:
         with get_db() as conn:
             c = conn.cursor()
+            c.execute("BEGIN IMMEDIATE")
 
             # Check if the card exists and belongs to the sender
             c.execute('''SELECT owner_id, member_code, era, rarity, in_binder
@@ -1350,34 +1336,44 @@ async def give_card(ctx, recipient: discord.Member, serial: str):
             card = c.fetchone()
 
             if not card:
-                await ctx.reply("Card not found!")
-                return
-
-            if card[0] != ctx.author.id:
-                await ctx.reply("You don't own this card!")
-                return
-
-            if card[4]:
-                await ctx.reply(
+                error_message = "Card not found!"
+            elif card[0] != ctx.author.id:
+                error_message = "You don't own this card!"
+            elif card[4]:
+                error_message = (
                     "That card is in your binder. Remove it with "
                     "`/binder remove` before giving it away."
                 )
-                return
+            else:
+                c.execute(
+                    "SELECT 1 FROM market_listings WHERE card_serial=?",
+                    (serial,),
+                )
+                if c.fetchone():
+                    error_message = (
+                        "That card is listed on the market. Unlist it with "
+                        "`/unlist` before giving it away."
+                    )
+                else:
+                    # Check if recipient exists in users table, if not create them
+                    c.execute("SELECT user_id FROM users WHERE user_id=?", (recipient.id,))
+                    recipient_exists = c.fetchone()
 
-            # Check if recipient exists in users table, if not create them
-            c.execute("SELECT user_id FROM users WHERE user_id=?", (recipient.id,))
-            recipient_exists = c.fetchone()
+                    if not recipient_exists:
+                        c.execute('''INSERT INTO users (user_id, username)
+                                    VALUES (?, ?)''',
+                                  (recipient.id, str(recipient)))
 
-            if not recipient_exists:
-                c.execute('''INSERT INTO users (user_id, username)
-                            VALUES (?, ?)''',
-                          (recipient.id, str(recipient)))
+                    # Transfer the card
+                    c.execute('''UPDATE cards
+                                SET owner_id=?, obtained_at=?, in_binder=0
+                                WHERE serial=?''',
+                              (recipient.id, str(datetime.datetime.now()), serial))
+                    conn.commit()
 
-            # Transfer the card
-            c.execute('''UPDATE cards
-                        SET owner_id=?, obtained_at=?, in_binder=0
-                        WHERE serial=?''',
-                      (recipient.id, str(datetime.datetime.now()), serial))
+        if error_message is not None:
+            await ctx.reply(error_message)
+            return
 
         # Get card details for message
         member_code, era, rarity = card[1], card[2], card[3]
@@ -1391,6 +1387,11 @@ async def give_card(ctx, recipient: discord.Member, serial: str):
             f"{ctx.author.mention} has given **{card_desc}** ({serial}) to {recipient.mention}!"
         )
 
+    except sqlite3.OperationalError as e:
+        if "database is locked" in str(e):
+            await ctx.reply("The system is busy, please try again in a moment.")
+        else:
+            raise
     except Exception as e:
         print(f"Error in give command: {e}")
         await ctx.reply("An error occurred while transferring the card. Please try again.")
