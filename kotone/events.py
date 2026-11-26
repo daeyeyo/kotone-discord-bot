@@ -6,6 +6,7 @@ from discord import app_commands
 from kotone.client import (
     bot,
     preferred_discord_display_name,
+    remove_afk_nickname,
 )
 from kotone.cooldowns import (
     cooldown_reminder_loop,
@@ -89,10 +90,12 @@ async def on_message(message):
             for user in message.mentions
             if user.id != message.author.id and not user.bot
         }
+        afk_cleared = False
         try:
             if clear_guild_afk(guild_id, message.author.id):
+                afk_cleared = True
                 afk_responses.append(
-                    f"Welcome back, **{message.author.display_name}**! "
+                    f"Welcome back, **{preferred_discord_display_name(message.author)}**! "
                     "Your AFK status has been removed."
                 )
 
@@ -108,7 +111,7 @@ async def on_message(message):
                     if len(visible_reason) > 300:
                         visible_reason = visible_reason[:297] + "..."
                     afk_responses.append(
-                        f"**{mentioned_user.display_name}** is AFK: "
+                        f"**{preferred_discord_display_name(mentioned_user)}** is AFK: "
                         f"{visible_reason} — {duration} ago."
                     )
         except sqlite3.Error as error:
@@ -116,6 +119,8 @@ async def on_message(message):
             afk_responses.append(
                 "AFK statuses couldn't be checked due to a database error."
             )
+        if afk_cleared:
+            await remove_afk_nickname(message.author)
 
     if afk_responses:
         response = []

@@ -7,6 +7,7 @@ from discord import app_commands
 from kotone.client import (
     SLASH_COMMANDS,
     SLASH_COMMAND_ALIASES,
+    add_afk_nickname,
     invalidate_user_name_cache,
     preferred_discord_display_name,
     resolve_discord_user_info,
@@ -687,7 +688,11 @@ async def afk(ctx, *, reason: str = "AFK"):
         await ctx.reply("Your AFK status couldn't be saved due to a database error.")
         return
 
+    nickname_skipped = await add_afk_nickname(ctx.author)
+    message = f"{preferred_discord_display_name(ctx.author)} is now AFK: {reason}"
+    if nickname_skipped:
+        message += f"\n-# Couldn't add [AFK] to your nickname: {nickname_skipped}."
     await ctx.reply(
-        f"{ctx.author.display_name} is now AFK: {reason}",
+        message,
         allowed_mentions=discord.AllowedMentions.none(),
     )
