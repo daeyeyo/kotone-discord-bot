@@ -58,14 +58,78 @@ def invalidate_user_name_cache(user_id):
     _USER_NAME_CACHE.pop(user_id, None)
 
 
+AFK_NICKNAME_PREFIX = "[AFK] "
+NICKNAME_MAX_LENGTH = 32
+
+
+def strip_afk_prefix(name):
+    """Return name without the "[AFK] " nickname tag added by /afk."""
+    if name and name.startswith(AFK_NICKNAME_PREFIX):
+        return name[len(AFK_NICKNAME_PREFIX):].strip() or name
+    return name
+
+
 def preferred_discord_display_name(user):
     """Return the user's preferred Discord display name."""
-    return (
-        getattr(user, "display_name", None)
-        or getattr(user, "global_name", None)
-        or getattr(user, "name", None)
-        or str(user)
-    ).strip()
+    return strip_afk_prefix(
+        (
+            getattr(user, "display_name", None)
+            or getattr(user, "global_name", None)
+            or getattr(user, "name", None)
+            or str(user)
+        ).strip()
+    )
+
+
+def _afk_nickname_block_reason(member):
+    """Return why the bot can't change member's nickname, or None if it can."""
+    guild = getattr(member, "guild", None)
+    if guild is None or not isinstance(member, discord.Member):
+        return "this only works in a server"
+    if member.id == guild.owner_id:
+        return "Discord doesn't let bots rename the server owner"
+    me = guild.me
+    if me is None or not me.guild_permissions.manage_nicknames:
+        return "I need the Manage Nicknames permission"
+    if me.top_role <= member.top_role:
+        return "my role must be above your highest role"
+    return None
+
+
+async def add_afk_nickname(member):
+    """Add "[AFK] " to member's nickname. Return None, or why it was skipped."""
+    blocked = _afk_nickname_block_reason(member)
+    if blocked:
+        return blocked
+    current = member.display_name
+    if current.startswith(AFK_NICKNAME_PREFIX):
+        return None
+    new_nick = AFK_NICKNAME_PREFIX + current
+    if len(new_nick) > NICKNAME_MAX_LENGTH:
+        return "your name is too long to fit the tag"
+    try:
+        await member.edit(nick=new_nick, reason="AFK status set")
+    except discord.HTTPException as error:
+        print(f"Could not add AFK nickname for {member.id}: {error}")
+        return "Discord refused the nickname change"
+    return None
+
+
+async def remove_afk_nickname(member):
+    """Remove the "[AFK] " tag from member's nickname, if it is there."""
+    nick = getattr(member, "nick", None)
+    if not nick or not nick.startswith(AFK_NICKNAME_PREFIX):
+        return
+    if _afk_nickname_block_reason(member):
+        return
+    restored = nick[len(AFK_NICKNAME_PREFIX):]
+    if not restored.strip() or restored in (member.global_name, member.name):
+        # The tag was added to their account name, so clear the nickname.
+        restored = None
+    try:
+        await member.edit(nick=restored, reason="AFK status cleared")
+    except discord.HTTPException as error:
+        print(f"Could not remove AFK nickname for {member.id}: {error}")
 
 
 def get_cached_discord_user(client, user_id, guild=None):
