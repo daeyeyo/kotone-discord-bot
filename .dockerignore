@@ -12,6 +12,7 @@ __pycache__/
 venv/
 kpop_cards.db*
 data/
+web/
 Dockerfile
 .dockerignore
 compose.yml
