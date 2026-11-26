@@ -49,6 +49,7 @@ async def cooldown_reminder_loop():
     try:
         with get_db() as conn:
             cursor = conn.cursor()
+            cursor.execute("DELETE FROM cooldowns WHERE expires_at <= ?", (now,))
             cursor.execute(
                 '''SELECT user_id, cooldown_type, expires_at
                    FROM cooldown_reminders
@@ -118,31 +119,20 @@ def check_cooldown(user_id: int, cooldown_type: str, duration: int) -> tuple[boo
     Returns (is_on_cooldown, remaining_seconds)
     """
     current_time = time.time()
-    
+
     with get_db() as conn:
         c = conn.cursor()
-        
-        # Clean up expired cooldowns
-        c.execute("DELETE FROM cooldowns WHERE expires_at < ?", (current_time,))
-        
-        # Check if user has active cooldown
         c.execute('''SELECT expires_at FROM cooldowns 
                      WHERE user_id=? AND cooldown_type=?''', 
                   (user_id, cooldown_type))
         result = c.fetchone()
-        
-        if result:
-            remaining = int(result[0] - current_time)
-            if remaining > 0:
-                return True, remaining
-            else:
-                # Cooldown expired, remove it
-                c.execute('''DELETE FROM cooldowns 
-                            WHERE user_id=? AND cooldown_type=?''',
-                         (user_id, cooldown_type))
-                return False, 0
-        
-        return False, 0
+
+    if result:
+        remaining = int(result[0] - current_time)
+        if remaining > 0:
+            return True, remaining
+
+    return False, 0
 
 def set_cooldown(user_id: int, cooldown_type: str, duration: int):
     """Set a cooldown for a user."""

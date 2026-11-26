@@ -11,7 +11,9 @@ from kotone.cooldowns import (
     cooldown_reminder_loop,
 )
 from kotone.db import (
-    get_db,
+    clear_guild_afk,
+    get_guild_afk_statuses,
+    load_afk_cache,
     sync_user_username,
 )
 
@@ -37,6 +39,10 @@ async def on_ready():
     )
     if not cooldown_reminder_loop.is_running():
         cooldown_reminder_loop.start()
+    try:
+        load_afk_cache()
+    except sqlite3.Error as error:
+        print(f"Database error while loading AFK cache: {error}")
     if not online_status_sent:
         online_status_sent = True
         await bot.send_status("Online")
@@ -77,48 +83,34 @@ async def on_message(message):
 
     afk_responses = []
     if message.guild is not None:
+        guild_id = message.guild.id
         mentioned_users = {
             user.id: user
             for user in message.mentions
             if user.id != message.author.id and not user.bot
         }
         try:
-            with get_db() as conn:
-                cursor = conn.cursor()
-                cursor.execute(
-                    '''SELECT reason FROM guild_afk
-                       WHERE guild_id=? AND user_id=?''',
-                    (message.guild.id, message.author.id),
+            if clear_guild_afk(guild_id, message.author.id):
+                afk_responses.append(
+                    f"Welcome back, **{message.author.display_name}**! "
+                    "Your AFK status has been removed."
                 )
-                author_afk = cursor.fetchone()
-                if author_afk:
-                    cursor.execute(
-                        "DELETE FROM guild_afk WHERE guild_id=? AND user_id=?",
-                        (message.guild.id, message.author.id),
-                    )
-                    afk_responses.append(
-                        f"Welcome back, **{message.author.display_name}**! "
-                        "Your AFK status has been removed."
-                    )
 
-                if mentioned_users:
-                    placeholders = ",".join("?" for _ in mentioned_users)
-                    cursor.execute(
-                        f'''SELECT user_id, reason, since FROM guild_afk
-                            WHERE guild_id=? AND user_id IN ({placeholders})''',
-                        (message.guild.id, *mentioned_users),
+            if mentioned_users:
+                now = time.time()
+                for user_id, reason, since in get_guild_afk_statuses(
+                    guild_id,
+                    mentioned_users,
+                ):
+                    mentioned_user = mentioned_users[user_id]
+                    duration = format_afk_duration(now - since)
+                    visible_reason = reason
+                    if len(visible_reason) > 300:
+                        visible_reason = visible_reason[:297] + "..."
+                    afk_responses.append(
+                        f"**{mentioned_user.display_name}** is AFK: "
+                        f"{visible_reason} — {duration} ago."
                     )
-                    now = time.time()
-                    for user_id, reason, since in cursor.fetchall():
-                        mentioned_user = mentioned_users[user_id]
-                        duration = format_afk_duration(now - since)
-                        visible_reason = reason
-                        if len(visible_reason) > 300:
-                            visible_reason = visible_reason[:297] + "..."
-                        afk_responses.append(
-                            f"**{mentioned_user.display_name}** is AFK: "
-                            f"{visible_reason} — {duration} ago."
-                        )
         except sqlite3.Error as error:
             print(f"Database error while checking AFK statuses: {error}")
             afk_responses.append(

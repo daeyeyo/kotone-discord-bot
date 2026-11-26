@@ -166,6 +166,7 @@ async def list_card(ctx, serial: str, price: int):
         return
 
     user_id = ctx.author.id
+    error_message = None
 
     try:
         with get_db() as conn:
@@ -179,31 +180,30 @@ async def list_card(ctx, serial: str, price: int):
             )
             row = c.fetchone()
             if not row:
-                await ctx.reply("Card not found!")
-                return
-            if row[0] != user_id:
-                await ctx.reply("You don't own this card!")
-                return
-            if row[1]:
-                await ctx.reply(
+                error_message = "Card not found!"
+            elif row[0] != user_id:
+                error_message = "You don't own this card!"
+            elif row[1]:
+                error_message = (
                     "That card is in your binder. Remove it with "
                     "`/binder remove` before listing it."
                 )
-                return
+            else:
+                # 2. Check if already listed
+                c.execute('''SELECT 1 FROM market_listings WHERE card_serial=?''', (serial,))
+                if c.fetchone():
+                    error_message = "This card is already on the market!"
+                else:
+                    # 3. Insert listing
+                    listed_at = str(datetime.datetime.now())
+                    c.execute('''INSERT INTO market_listings (card_serial, seller_id, price, listed_at)
+                                 VALUES (?, ?, ?, ?)''',
+                              (serial, user_id, price, listed_at))
+                    conn.commit()
 
-            # 2. Check if already listed
-            c.execute('''SELECT 1 FROM market_listings WHERE card_serial=?''', (serial,))
-            if c.fetchone():
-                await ctx.reply("This card is already on the market!")
-                return
-
-            # 3. Insert listing
-            listed_at = str(datetime.datetime.now())
-            c.execute('''INSERT INTO market_listings (card_serial, seller_id, price, listed_at)
-                         VALUES (?, ?, ?, ?)''',
-                      (serial, user_id, price, listed_at))
-
-            conn.commit()
+        if error_message is not None:
+            await ctx.reply(error_message)
+            return
 
         await ctx.reply(f"✅ Your card **{serial}** has been listed for **{price} COMO**!")
 
@@ -221,6 +221,7 @@ async def list_card(ctx, serial: str, price: int):
 async def unlist_card(ctx, serial: str):
     """Remove your card from the market."""
     user_id = ctx.author.id
+    error_message = None
 
     try:
         with get_db() as conn:
@@ -231,15 +232,17 @@ async def unlist_card(ctx, serial: str):
             c.execute('''SELECT seller_id FROM market_listings WHERE card_serial=?''', (serial,))
             row = c.fetchone()
             if not row:
-                await ctx.reply("This card is not listed on the market.")
-                return
-            if row[0] != user_id:
-                await ctx.reply("You didn't list this card!")
-                return
+                error_message = "This card is not listed on the market."
+            elif row[0] != user_id:
+                error_message = "You didn't list this card!"
+            else:
+                # Delete listing
+                c.execute('''DELETE FROM market_listings WHERE card_serial=?''', (serial,))
+                conn.commit()
 
-            # Delete listing
-            c.execute('''DELETE FROM market_listings WHERE card_serial=?''', (serial,))
-            conn.commit()
+        if error_message is not None:
+            await ctx.reply(error_message)
+            return
 
         await ctx.reply(f"✅ Your listing for **{serial}** has been removed.")
 
@@ -252,6 +255,10 @@ async def unlist_card(ctx, serial: str):
 async def buy_card(ctx, serial: str):
     """Buy a card from the market using COMO."""
     buyer_id = ctx.author.id
+    error_message = None
+    seller_id = None
+    price = None
+    card_data = None
 
     try:
         with get_db() as conn:
@@ -262,68 +269,69 @@ async def buy_card(ctx, serial: str):
             c.execute('''SELECT seller_id, price FROM market_listings WHERE card_serial=?''', (serial,))
             listing = c.fetchone()
             if not listing:
-                await ctx.reply("This card is not listed for sale.")
-                return
-            seller_id, price = listing
-
-            if seller_id == buyer_id:
-                await ctx.reply("You already own this card – you can't buy your own listing!")
-                return
-
-            # 2. Get buyer's balance
-            c.execute("SELECT como FROM users WHERE user_id=?", (buyer_id,))
-            buyer_row = c.fetchone()
-            buyer_balance = buyer_row[0] if buyer_row else 0
-            if buyer_balance < price:
-                await ctx.reply(f"Insufficient COMO! You have {buyer_balance}, but the card costs {price}.")
-                return
-
-            # 3. Get seller's balance
-            c.execute("SELECT como FROM users WHERE user_id=?", (seller_id,))
-            seller_row = c.fetchone()
-            seller_balance = seller_row[0] if seller_row else 0
-
-            # 4. Verify card still owned by seller (defensive)
-            c.execute("SELECT owner_id FROM cards WHERE serial=?", (serial,))
-            card_owner = c.fetchone()
-            if not card_owner or card_owner[0] != seller_id:
-                await ctx.reply("The seller no longer owns this card. Listing removed.")
-                c.execute("DELETE FROM market_listings WHERE card_serial=?", (serial,))
-                conn.commit()
-                return
-
-            # 5. Perform transaction
-            new_buyer_balance = buyer_balance - price
-            new_seller_balance = seller_balance + price
-
-            # Update balances
-            c.execute("UPDATE users SET como=? WHERE user_id=?", (new_buyer_balance, buyer_id))
-            c.execute("UPDATE users SET como=? WHERE user_id=?", (new_seller_balance, seller_id))
-
-            # Transfer card ownership
-            c.execute('''UPDATE cards
-                         SET owner_id=?, obtained_at=?, in_binder=0
-                         WHERE serial=?''',
-                      (buyer_id, str(datetime.datetime.now()), serial))
-
-            # Remove listing
-            c.execute("DELETE FROM market_listings WHERE card_serial=?", (serial,))
-
-            conn.commit()
-
-        # Get card name for response
-        try:
-            with get_db() as conn2:
-                c2 = conn2.cursor()
-                c2.execute("SELECT member_code, era, rarity FROM cards WHERE serial=?", (serial,))
-                card_data = c2.fetchone()
-                if card_data:
-                    member_code, era, rarity = card_data
-                    member_name = ERAS[era]['members'][member_code]['name']
-                    card_desc = f"{rarity} {member_name}"
+                error_message = "This card is not listed for sale."
+            else:
+                seller_id, price = listing
+                if seller_id == buyer_id:
+                    error_message = "You already own this card – you can't buy your own listing!"
                 else:
-                    card_desc = serial
-        except:
+                    # 2. Get buyer's balance
+                    c.execute("SELECT como FROM users WHERE user_id=?", (buyer_id,))
+                    buyer_row = c.fetchone()
+                    buyer_balance = buyer_row[0] if buyer_row else 0
+                    if buyer_balance < price:
+                        error_message = f"Insufficient COMO! You have {buyer_balance}, but the card costs {price}."
+                    else:
+                        # 3. Get seller's balance
+                        c.execute("SELECT como FROM users WHERE user_id=?", (seller_id,))
+                        seller_row = c.fetchone()
+                        seller_balance = seller_row[0] if seller_row else 0
+
+                        # 4. Verify card still owned by seller (defensive)
+                        c.execute(
+                            "SELECT owner_id, member_code, era, rarity FROM cards WHERE serial=?",
+                            (serial,),
+                        )
+                        card_owner = c.fetchone()
+                        if not card_owner or card_owner[0] != seller_id:
+                            c.execute("DELETE FROM market_listings WHERE card_serial=?", (serial,))
+                            conn.commit()
+                            error_message = "The seller no longer owns this card. Listing removed."
+                        else:
+                            card_data = card_owner[1:]
+
+                            # 5. Perform transaction
+                            new_buyer_balance = buyer_balance - price
+                            new_seller_balance = seller_balance + price
+
+                            # Update balances
+                            c.execute("UPDATE users SET como=? WHERE user_id=?", (new_buyer_balance, buyer_id))
+                            c.execute("UPDATE users SET como=? WHERE user_id=?", (new_seller_balance, seller_id))
+
+                            # Transfer card ownership
+                            c.execute('''UPDATE cards
+                                         SET owner_id=?, obtained_at=?, in_binder=0
+                                         WHERE serial=?''',
+                                      (buyer_id, str(datetime.datetime.now()), serial))
+
+                            # Remove listing
+                            c.execute("DELETE FROM market_listings WHERE card_serial=?", (serial,))
+
+                            conn.commit()
+
+        if error_message is not None:
+            await ctx.reply(error_message)
+            return
+
+        # Format card name for response
+        try:
+            if card_data:
+                member_code, era, rarity = card_data
+                member_name = ERAS[era]['members'][member_code]['name']
+                card_desc = f"{rarity} {member_name}"
+            else:
+                card_desc = serial
+        except KeyError:
             card_desc = serial
 
         await ctx.reply(
